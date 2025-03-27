@@ -1,0 +1,235 @@
+/* Initialisation */
+
+:root {
+    --success: #3A5C;
+    --danger: #C33C;
+    --info: #80808080;
+    --text: black;
+    --text-soft: #777;
+    --background: #F4F5F6;
+    --background-soft: #EEE;
+    --resalib: #5ad4db;
+    --resalib-soft: #5ad4db88;
+    --shadow: #0005;
+}
+
+@font-face {
+    font-family: "Nunito";
+    src: url("../../public/fonts/nunito.woff2") format("woff2");
+    font-display:swap;
+}
+
+/* General */
+
+body {
+    background-color: var(--background);
+    background-image: url("../../public/images/sayagata.png");
+    background-repeat: repeat;
+    background-attachment: fixed;
+    color: var(--text);
+    font-family: 'Nunito', sans-serif;
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+h1 {
+    text-align: center;
+    color: var(--text);
+    margin-top: 20px;
+    font-size: 2em;
+}
+
+.text-center {
+    text-align: center;
+}
+
+.article-column-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.article-row-container {
+    width: 100%;
+    text-align: center;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+/* Buttons */
+
+.btn-success {
+    background-color: var(--success);
+}
+
+.btn-danger {
+    background-color: var(--danger);
+}
+
+.btn-info {
+    background-color: var(--info);
+}
+
+/* Cocktail */
+
+.cocktail-container {
+    margin: 10px;
+    text-align: center;
+    border: 2px solid var(--text);
+    border-radius: 8px;
+    padding: 3px;
+    background-color: var(--background-soft);
+}
+  
+.cocktail-image {
+    width: 150px;
+    height: 150px;
+    object-fit: cover;
+    border-top-left-radius: 4px;
+    border-top-right-radius: 4px;
+}
+
+.cocktail-name {
+    margin-top: 2px;
+    margin-bottom: 5px;
+    font-size: 1.1em;
+    color: var(--text);
+}
+
+.cocktail-name.spirit {
+    margin-bottom: 0;
+    font-size: 0.8em;
+    border-bottom-left-radius: 4px;
+    border-bottom-right-radius: 4px;
+    background-color: var(--resalib-soft);
+}
+
+/* Stock */
+
+.stock-container {
+    margin: 5px;
+    text-align: center;
+    border: 2px solid var(--text);
+    border-radius: 8px;
+    padding: 3px;
+    background-color: var(--background-soft);
+    position: relative;
+    display: inline-block;
+}
+
+.stock-nb {
+    position: absolute;
+    top: -5px;
+    right: 8px;
+    background-color: var(--background-soft);
+    box-shadow: 0 0 5px var(--shadow);
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.8em;
+}
+
+.stock-image {
+    width: 100px;
+    height: 120px;
+    object-fit: cover;
+    border-top-left-radius: 4px;
+    border-top-right-radius: 4px;
+}
+  
+.stock-name {
+    margin-top: 2px;
+    margin-bottom: 5px;
+    font-size: 1em;
+    color: var(--text);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: clip;
+    max-width: 100px;  
+}
+
+.stock-name.spirit {
+    margin-bottom: 0;
+    font-size: 0.8em;
+    border-bottom-left-radius: 4px;
+    border-bottom-right-radius: 4px;
+    background-color: var(--resalib-soft);
+}
+
+/* Separators */
+
+.small-hr {
+    width: 300px;
+}
+
+.text-hr {
+    width: 300px;
+    text-align: center;
+    border-bottom: 1px solid var(--text);
+    line-height: 0.1em;
+    margin: 25px 0 25px 0;
+}
+
+.text-hr span {
+    background: var(--background);
+    border-radius: 50px;
+    padding: 0 10px;
+}
+
+/* Modals */
+
+.modal {
+    background: var(--background-soft);
+    color: var(--text);
+    padding: 20px;
+    border: 2px solid var(--text);
+    border-radius: 8px;
+    width: 400px;
+    max-width: 75%;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 1001;
+}
+
+.modal-overlay {
+    background: rgba(0, 0, 0, 0.75);
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+}
+
+.modal-button {
+    text-align: center;
+    margin-block-end: 0;
+    cursor: pointer;
+    border: 2px solid var(--text);
+    border-radius: 8px;
+    padding: 2px;
+}
+
+.modal-input {
+    text-align: center;
+    border: 1px solid var(--text);
+    border-radius: 4px;
+    padding: 8px;
+    width: 100%;
+    box-sizing: border-box;
+    font-size: 16px;
+}
+
+.no-scroll {
+    overflow: hidden;
+}
