@@ -42,7 +42,7 @@ const Home = () => {
         ) : (
           <>
             <h2 className='text-hr'><span>Cocktails</span></h2>
-            <div className='article-row-container'>
+            <div className='article-row-container fo'>
               {cocktails.filter(a => a.type==='COCKTAIL').map((cocktail) => (
                 <div 
                   key={cocktail.id}
@@ -56,7 +56,7 @@ const Home = () => {
               ))}
             </div>
             <h2 className='text-hr'><span>Shooters</span></h2>
-            <div className='article-row-container'>
+            <div className='article-row-container fo'>
               {cocktails.filter(a => a.type==='SHOOTER').map((cocktail) => (
                 <div 
                   key={cocktail.id}
@@ -70,7 +70,7 @@ const Home = () => {
               ))}
             </div>
             <h2 className='text-hr'><span>Bière</span></h2>
-            <div className='article-row-container'>
+            <div className='article-row-container fo'>
               {cocktails.filter(a => a.type==='BEER').map((cocktail) => (
                 <div 
                   key={cocktail.id}

@@ -12,6 +12,7 @@ const Cocktail = ({ cocktail }) => {
         {cocktail.spirit&&<p className='cocktail-spirit'>{cocktail.spirit}</p>}
       </div>
       <h3 className='cocktail-name'>{cocktail.name}</h3>
+      <p className='cocktail-name'>{(cocktail.price).toLocaleString(undefined,{minimumFractionDigits:2})} €</p>
     </div>
   );
 };

@@ -12,7 +12,7 @@ app.use(express.static(path.resolve(__dirname, '../client/build')));
 
 app.get('/cocktail', async (req, res) => {
   try {
-    const cocktailsResult = await pool.query('SELECT c.id,c.name,c.type,c.spirit,c.instructions,g.name as glass,c.img,c.nbmade FROM cocktail c JOIN glass g ON g.id = c.glass');
+    const cocktailsResult = await pool.query('SELECT c.id,c.name,c.type,c.spirit,c.instructions,g.name as glass,c.img,c.nbmade,c.price FROM cocktail c JOIN glass g ON g.id = c.glass');
     const cocktails = cocktailsResult.rows;
 
     for (const cocktail of cocktails) {
@@ -165,6 +165,49 @@ app.post('/glassreload', async (req, res) => {
   } catch (err) {
     console.error(err.message);
     res.status(500).send('Server Error');
+  }
+});
+
+// Users
+app.get('/user', async (req, res) => {
+  try {
+    const result = await pool.query('SELECT * FROM "user"');
+    res.json(result.rows);
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).send('Server Error');
+  }
+});
+
+app.post('/useractive', async (req, res) => {
+  try {
+    const { userId, active } = req.body;
+
+    const result = await pool.query(`UPDATE "user" SET active = $1 WHERE id = $2 RETURNING *;`,[active,userId]);
+
+    if (result.rows.length === 0) {
+      return res.status(404).json({ message: 'User not found.' });
+    }
+
+    res.json(result.rows[0]);
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).send('Server Error');
+  }
+});
+
+// Purchase
+
+app.post('/newpurchase', async (req, res) => {
+  try {
+    const { userId, cocktailName, price } = req.body;
+
+    await pool.query(`INSERT INTO purchase (user_id,cocktail_name,price,"date") VALUES ($1,$2,$3,now())`,[userId,cocktailName,price]);
+
+    res.json({ success: true, message: 'Cocktail made successfully!' });
+  } catch (error) {
+    console.error('Error making purchase:', error);
+    res.status(500).json({ success: false, message: 'Server error.' });
   }
 });
 
