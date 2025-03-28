@@ -154,59 +154,53 @@ const Gestion = () => {
         ) : (
           <>
             <h2 className='text-hr'><span>Ingrédients</span></h2>
-            <div style={{ width: '100%', textAlign: 'center' }}>
-              <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'center' }}>
-                {ingredients.filter(a => a.liquid).map((ingredient) => (
-                  <div
-                    key={ingredient.id}
-                    onClick={() => openIngredientModal(ingredient)}
-                    style={{ cursor: 'pointer' }}
-                  >
-                    <BoIngredient 
-                      name={ingredient.name} 
-                      img={ingredient.img} 
-                      stock={ingredient.stock}
-                      unit={ingredient.unit}
-                    />
-                  </div>
-                ))}
-              </div>
+            <div className='article-row-container'>
+              {ingredients.filter(a => a.liquid).map((ingredient) => (
+                <div
+                  key={ingredient.id}
+                  onClick={() => openIngredientModal(ingredient)}
+                  style={{ cursor: 'pointer' }}
+                >
+                  <BoIngredient 
+                    name={ingredient.name} 
+                    img={ingredient.img} 
+                    stock={ingredient.stock}
+                    unit={ingredient.unit}
+                  />
+                </div>
+              ))}
             </div>
-            <div style={{ width: '100%', textAlign: 'center' }}>
-              <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'center' }}>
-                {ingredients.filter(a => !a.liquid).map((ingredient) => (
-                  <div
-                    key={ingredient.id}
-                    onClick={() => openIngredientModal(ingredient)}
-                    style={{ cursor: 'pointer' }}
-                  >
-                    <BoIngredient 
-                      name={ingredient.name} 
-                      img={ingredient.img} 
-                      stock={ingredient.stock}
-                      unit={ingredient.unit}
-                    />
-                  </div>
-                ))}
-              </div>
+            <div className='article-row-container'>
+              {ingredients.filter(a => !a.liquid).map((ingredient) => (
+                <div
+                  key={ingredient.id}
+                  onClick={() => openIngredientModal(ingredient)}
+                  style={{ cursor: 'pointer' }}
+                >
+                  <BoIngredient 
+                    name={ingredient.name} 
+                    img={ingredient.img} 
+                    stock={ingredient.stock}
+                    unit={ingredient.unit}
+                  />
+                </div>
+              ))}
             </div>
             <h2 className='text-hr'><span>Vaisselle</span></h2>
-            <div style={{ width: '100%', textAlign: 'center' }}>
-              <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'center' }}>
-                {glasses.sort((a,b) => b.volume-a.volume).map((glass) => (
-                  <div
-                    key={glass.id}
-                    onClick={() => openGlassModal(glass)}
-                    style={{ cursor: 'pointer' }}
-                  >
-                    <BoGlass
-                      name={glass.name} 
-                      img={glass.img} 
-                      stock={glass.stock}
-                    />
-                  </div>
-                ))}
-              </div>
+            <div className='article-row-container'>
+              {glasses.sort((a,b) => b.volume-a.volume).map((glass) => (
+                <div
+                  key={glass.id}
+                  onClick={() => openGlassModal(glass)}
+                  style={{ cursor: 'pointer' }}
+                >
+                  <BoGlass
+                    name={glass.name} 
+                    img={glass.img} 
+                    stock={glass.stock}
+                  />
+                </div>
+              ))}
             </div>
           </>
         )}

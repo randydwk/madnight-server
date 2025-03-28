@@ -33,10 +33,9 @@ const Home = () => {
 
   return (
     <div>
-      <div className='text-center' style={{padding:'10px',backgroundColor:'white',borderBottom:'solid 3px var(--resalib)'}}>
-        <img src={`images/cocktalib.png`} alt="Cocktalib Logo" />
+      <div className='text-center' style={{paddingTop:'10px',backgroundColor:'black'}}>
+        <img src={`images/madnight_logo.png`} alt="Logo" style={{width:'200px'}}/>
       </div>
-      <h1>À la carte</h1>
       <div className='article-column-container'>
         {cocktails.length === 0 ? (
           <i>Chargement...</i>
@@ -87,10 +86,9 @@ const Home = () => {
           </>
         )}
       </div>
-      <p className='text-center'><i>Cliquez sur une boisson pour voir sa composition</i></p>
       <p className='text-center' style={{color:'var(--text-soft)!important',textDecoration:'none'}}>
         <a href="/gestion" style={{color:'var(--text-soft)!important',textDecoration:'none'}}>©</a>
-        &nbsp;Cocktalib 2024
+        &nbsp;MAD•NIGHT by Maddy 2025
       </p>
 
       <CocktailModal
