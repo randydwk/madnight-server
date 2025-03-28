@@ -12,6 +12,11 @@
     --shadow: #0005;
 }
 
+@font-face {
+    font-family: "Open Sans";
+    src: url(../../public/fonts/open_sans.ttf);
+}
+
 /* General */
 
 body {
@@ -19,7 +24,7 @@ body {
     background-repeat: repeat;
     background-attachment: fixed;
     color: var(--text);
-    font-family: 'Segoe UI';
+    font-family: 'Open Sans';
     margin: 0;
     padding: 0;
     box-sizing: border-box;
