@@ -35,6 +35,12 @@ const Gestion = () => {
 
   const [users, setUsers] = useState([]);
   const [selectUser, setSelectUser] = useState(false);
+  const [openedUser, setOpenedUser] = useState(-1);
+
+  const formatDateTime = (dateString) => {
+    const date = new Date(dateString);
+    return date.toLocaleDateString("fr-FR") + " " + date.toLocaleTimeString("fr-FR", { hour: "2-digit", minute: "2-digit" });
+  };
 
   /* DATABASE */
 
@@ -407,10 +413,51 @@ const Gestion = () => {
           <>
             <div className='user-list'>
               <input type='checkbox' checked={user.active} className='toggleswitch'
-                onClick={() =>userToggle(user)}
-              
+                onClick={() => userToggle(user)}
               ></input>
-              <span>{user.name}</span>
+              <div
+                onClick={() => {
+                  if (openedUser === user.id) setOpenedUser(-1);
+                  else setOpenedUser(user.id);
+                }}
+                style={{ cursor: 'pointer',marginLeft:'10px',width:'100%'}}
+              >{user.name}</div>
+            </div>
+            <div className={'user-list-infos'+(openedUser===user.id?' opened':'')}>
+              {user.purchases.length > 0 && <>
+                <table style={{margin:'10px',width:'450px'}}>
+                  <tbody>
+                    {user.purchases.map((purchase) => (
+                      <tr>
+                        <td style={{textAlign:'left',width:'140px',color:'var(--text-soft)'}}>{formatDateTime(purchase.date)}</td>
+                        <td style={{textAlign:'left',width:'250px'}}>• {purchase.cocktail_name}</td>
+                        <td style={{textAlign:'right',width:'60px'}}>{(purchase.price).toLocaleString(undefined,{minimumFractionDigits:2})} €</td>
+                        {/* <td style={{textAlign:'right',width:'10%'}}>
+                          <Trash2
+                            key={cocktail_user.id}
+                            onClick={() => {
+                              removePrepareCocktail(cocktail_user.id);
+                            }}
+                            style={{ cursor: 'pointer', paddingTop:'3px' }}
+                            size={20}
+                          /></td> */}
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+                <div style={{marginLeft:'10px'}}>
+                  Reste à payer :&nbsp;
+                  {user.purchases.reduce((acc,purchase) => {
+                    if (!purchase.refunded) return acc + purchase.price;
+                    return acc;
+                  },0).toLocaleString(undefined,{minimumFractionDigits:2})} €
+                </div>
+                <div style={{marginLeft:'10px',marginTop:'5px'}}>
+                  Total :&nbsp;
+                  {user.purchases.reduce((acc,purchase) => acc + purchase.price,0).toLocaleString(undefined,{minimumFractionDigits:2})} €
+                </div>
+              </>}
+              <button className='btn-danger'><Trash2 size={20}/> Supprimer l'utilisateur</button>
             </div>
           </>
         ))}

@@ -172,7 +172,15 @@ app.post('/glassreload', async (req, res) => {
 app.get('/user', async (req, res) => {
   try {
     const result = await pool.query('SELECT * FROM "user"');
-    res.json(result.rows);
+
+    const users = result.rows;
+
+    for (const user of users) {
+      const purchaseResult = await pool.query(`SELECT * FROM purchase p WHERE p.user_id = $1`, [user.id]);
+      user.purchases = purchaseResult.rows;
+    }
+
+    res.json(users);
   } catch (err) {
     console.error(err.message);
     res.status(500).send('Server Error');

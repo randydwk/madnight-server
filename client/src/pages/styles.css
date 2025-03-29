@@ -5,7 +5,7 @@
     --danger: #C33C;
     --info: #80808080;
     --text: white;
-    --text-soft: #EEE;
+    --text-soft: #999;
     --background: black;
     --background-soft: #222;
     --tag: #4e4b5d;
@@ -127,6 +127,17 @@ h1 {
 
 /* Buttons */
 
+.btn-success, .btn-danger, .btn-info {
+    border: 1px white solid;
+    color: var(--text);
+    margin: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 5px;
+}
+
 .btn-success {
     background-color: var(--success);
 }
@@ -247,12 +258,20 @@ p.cocktail-name, p.stock-name {
 .user-list {
     width: 100%;
     border-top: 1px solid var(--background-soft);
+    border-bottom: 1px solid var(--background-soft);
     display: flex;
     align-items: center;
 }
 
-.user-list span {
-    margin-left: 10px;
+.user-list-infos {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.3s ease-out;
+}
+
+.user-list-infos.opened {
+    max-height: 300px;
+    overflow-y: auto;
 }
 
 /* Toggleswitches */
@@ -288,7 +307,7 @@ p.cocktail-name, p.stock-name {
 }
 
 .toggleswitch:checked:before {
-    transform: translateX(22px);
+    transform: translateX(20px);
 }
 
 .toggleswitch:disabled {
