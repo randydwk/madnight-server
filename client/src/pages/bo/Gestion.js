@@ -429,7 +429,7 @@ const Gestion = () => {
         }).map((user) => (
           <>
             <div className='user-list'>
-              <div>
+              <div style={{marginBottom:'-4px'}}>
                 <input type='checkbox' checked={user.active} className='toggleswitch'
                   onClick={() => userToggle(user)}
                 ></input>
