@@ -129,6 +129,23 @@ const Gestion = () => {
     fetchUsers();
   }
 
+  const purchaseRefundToggle = async (purchase) => {
+    try {
+      const response = await fetch(`/purchaserefund`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({purchaseId:purchase.id,refunded:!purchase.refunded}),
+      });
+      if (!response.ok) alert('Failed to refund purchase.');
+    } catch (error) {
+      console.error('Error refunding purchase :', error);
+      alert('Error refunding purchase.');
+    }
+    fetchUsers();
+  }
+
   /* PREPARE LIST */
 
   const [prepareList, setPrepareList] = useState([]);
@@ -412,35 +429,33 @@ const Gestion = () => {
         }).map((user) => (
           <>
             <div className='user-list'>
-              <input type='checkbox' checked={user.active} className='toggleswitch'
-                onClick={() => userToggle(user)}
-              ></input>
+              <div>
+                <input type='checkbox' checked={user.active} className='toggleswitch'
+                  onClick={() => userToggle(user)}
+                ></input>
+              </div>
               <div
                 onClick={() => {
                   if (openedUser === user.id) setOpenedUser(-1);
                   else setOpenedUser(user.id);
                 }}
-                style={{ cursor: 'pointer',marginLeft:'10px',width:'100%'}}
+                style={{cursor:'pointer',marginLeft:'10px',width:'100%'}}
               >{user.name}</div>
             </div>
             <div className={'user-list-infos'+(openedUser===user.id?' opened':'')}>
               {user.purchases.length > 0 && <>
-                <table style={{margin:'10px',width:'450px'}}>
+                <table style={{margin:'10px',width:'530px'}}>
                   <tbody>
-                    {user.purchases.map((purchase) => (
-                      <tr>
-                        <td style={{textAlign:'left',width:'140px',color:'var(--text-soft)'}}>{formatDateTime(purchase.date)}</td>
-                        <td style={{textAlign:'left',width:'250px'}}>• {purchase.cocktail_name}</td>
-                        <td style={{textAlign:'right',width:'60px'}}>{(purchase.price).toLocaleString(undefined,{minimumFractionDigits:2})} €</td>
-                        {/* <td style={{textAlign:'right',width:'10%'}}>
-                          <Trash2
-                            key={cocktail_user.id}
-                            onClick={() => {
-                              removePrepareCocktail(cocktail_user.id);
-                            }}
-                            style={{ cursor: 'pointer', paddingTop:'3px' }}
-                            size={20}
-                          /></td> */}
+                    {user.purchases.sort((a,b) => new Date(a.date) - new Date(b.date)).map((purchase) => (
+                      <tr className={purchase.refunded?'user-purchase-refunded':''}>
+                        <td style={{paddingBottom:'6px',textAlign:'left',width:'140px'}}>{formatDateTime(purchase.date)}</td>
+                        <td style={{paddingBottom:'6px',textAlign:'left',width:'250px'}}>• {purchase.cocktail_name}</td>
+                        <td style={{paddingBottom:'6px',textAlign:'right',width:'60px'}}>{(purchase.price).toLocaleString(undefined,{minimumFractionDigits:2})} €</td>
+                        <td style={{textAlign:'right',width:'80px'}}>
+                          <input type='checkbox' checked={purchase.refunded} className='toggleswitch'
+                            onClick={() => purchaseRefundToggle(purchase)}
+                          ></input>
+                        </td>
                       </tr>
                     ))}
                   </tbody>
@@ -452,7 +467,7 @@ const Gestion = () => {
                     return acc;
                   },0).toLocaleString(undefined,{minimumFractionDigits:2})} €
                 </div>
-                <div style={{marginLeft:'10px',marginTop:'5px'}}>
+                <div style={{margin:'5px 0 20px 10px'}}>
                   Total :&nbsp;
                   {user.purchases.reduce((acc,purchase) => acc + purchase.price,0).toLocaleString(undefined,{minimumFractionDigits:2})} €
                 </div>

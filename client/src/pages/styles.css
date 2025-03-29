@@ -274,6 +274,10 @@ p.cocktail-name, p.stock-name {
     overflow-y: auto;
 }
 
+.user-purchase-refunded {
+    color: var(--text-soft);
+}
+
 /* Toggleswitches */
 
 .toggleswitch {
@@ -307,7 +311,7 @@ p.cocktail-name, p.stock-name {
 }
 
 .toggleswitch:checked:before {
-    transform: translateX(20px);
+    transform: translateX(22px);
 }
 
 .toggleswitch:disabled {

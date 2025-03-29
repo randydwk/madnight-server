@@ -219,6 +219,23 @@ app.post('/newpurchase', async (req, res) => {
   }
 });
 
+app.post('/purchaserefund', async (req, res) => {
+  try {
+    const { purchaseId, refunded } = req.body;
+
+    const result = await pool.query(`UPDATE purchase SET refunded = $1 WHERE id = $2 RETURNING *;`,[refunded,purchaseId]);
+
+    if (result.rows.length === 0) {
+      return res.status(404).json({ message: 'Purchase not found.' });
+    }
+
+    res.json(result.rows[0]);
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).send('Server Error');
+  }
+});
+
 // General
 
 app.get('*', (req, res) => {
