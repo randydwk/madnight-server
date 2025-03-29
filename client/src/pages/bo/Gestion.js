@@ -361,6 +361,7 @@ const Gestion = () => {
             {prepareList.length>0 && <>
               <button className='btn-big-white' disabled={prepareLoading}
                 onClick={() => validatePreparation()}
+                style={{cursor:'pointer'}}
               >
                 {prepareLoading?(
                   <><Loader size={20}/> Valider la préparation</>
@@ -422,11 +423,18 @@ const Gestion = () => {
       </>}
 
       {activePage === "Utilisateurs" && <>
-        <h1>Utilisateurs</h1>
+        <div className='article-column-container'>
+          <h2 className='text-hr'><span>Utilisateurs</span></h2>
+        </div>
         {users.sort((a,b) => {
           if (b.active !== a.active) return b.active - a.active;
           return a.name.localeCompare(b.name);
-        }).map((user) => (
+        }).map((user) => {
+          const reste = user.purchases.reduce((acc, item) => {
+            return !item.refunded ? acc + item.price : acc;
+          }, 0);
+          
+          return (
           <>
             <div className='user-list'>
               <div style={{marginBottom:'-4px'}}>
@@ -440,13 +448,24 @@ const Gestion = () => {
                   else setOpenedUser(user.id);
                 }}
                 style={{cursor:'pointer',marginLeft:'10px',width:'100%'}}
-              >{user.name}</div>
+              >
+                {user.name}
+                {reste>0 && <span style={{color:'var(--danger)'}}>&nbsp;&nbsp;({reste.toLocaleString(undefined,{minimumFractionDigits:2})} €)</span>}
+              </div>
             </div>
             <div className={'user-list-infos'+(openedUser===user.id?' opened':'')}>
               {user.purchases.length > 0 && <>
+                <div style={{margin:'10px 0 5px 12px'}}>
+                  Reste à payer :&nbsp;
+                  {reste.toLocaleString(undefined,{minimumFractionDigits:2})} €
+                </div>
+                <div style={{margin:'5px 0 0 12px'}}>
+                  Total :&nbsp;
+                  {user.purchases.reduce((acc,purchase) => acc + purchase.price,0).toLocaleString(undefined,{minimumFractionDigits:2})} €
+                </div>
                 <table style={{margin:'10px',width:'530px'}}>
                   <tbody>
-                    {user.purchases.sort((a,b) => new Date(a.date) - new Date(b.date)).map((purchase) => (
+                    {user.purchases.sort((a,b) => new Date(b.date) - new Date(a.date)).map((purchase) => (
                       <tr className={purchase.refunded?'user-purchase-refunded':''}>
                         <td style={{paddingBottom:'6px',textAlign:'left',width:'140px'}}>{formatDateTime(purchase.date)}</td>
                         <td style={{paddingBottom:'6px',textAlign:'left',width:'250px'}}>• {purchase.cocktail_name}</td>
@@ -460,22 +479,11 @@ const Gestion = () => {
                     ))}
                   </tbody>
                 </table>
-                <div style={{marginLeft:'10px'}}>
-                  Reste à payer :&nbsp;
-                  {user.purchases.reduce((acc,purchase) => {
-                    if (!purchase.refunded) return acc + purchase.price;
-                    return acc;
-                  },0).toLocaleString(undefined,{minimumFractionDigits:2})} €
-                </div>
-                <div style={{margin:'5px 0 20px 10px'}}>
-                  Total :&nbsp;
-                  {user.purchases.reduce((acc,purchase) => acc + purchase.price,0).toLocaleString(undefined,{minimumFractionDigits:2})} €
-                </div>
               </>}
               <button className='btn-danger'><Trash2 size={20}/> Supprimer l'utilisateur</button>
             </div>
           </>
-        ))}
+        )})}
         <div className='toolbar-space'></div>
       </>}
 
