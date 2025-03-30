@@ -361,7 +361,6 @@ const Gestion = () => {
               </div>
               </>
             )}
-            <div className='toolbar-space'></div>
           </div>
           <div className='article-list-container'>
             <h1>Commande</h1>
@@ -396,7 +395,6 @@ const Gestion = () => {
                 )}
               </button>
             </>}
-            <div className='toolbar-space'></div>
           </div>
         </div>
       </>}
@@ -428,7 +426,6 @@ const Gestion = () => {
             </>
           )}
         </div>
-        <div className='toolbar-space'></div>
       </>}
 
       {activePage === "Utilisateurs" && <>
@@ -502,13 +499,14 @@ const Gestion = () => {
             </div>
           </>
         )})}
-        <div className='toolbar-space'></div>
       </>}
 
       {activePage === "Carte" && <>
         <h1>Carte</h1>
       </>}
       
+      <div className='toolbar-space'></div>
+
       <div className="bottom-toolbar">
         {pages.map((page) => (
           <button
