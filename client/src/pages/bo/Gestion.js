@@ -5,10 +5,11 @@ import BoUser from './BoUser';
 import BoCocktailModal from './BoCocktailModal';
 import BoIngredientModal from './BoIngredientModal';
 import BoUserModal from './BoUserModal';
-import { Martini, Box, Users, SquareMenu, Trash2, ArrowLeftCircle, Check, Loader, PlusCircle } from 'lucide-react';
+import { Martini, Box, Users, SquareMenu, Trash2, ArrowLeftCircle, Check, Loader, PlusCircle, X } from 'lucide-react';
 import '../styles.css';
 
 const Gestion = () => {
+
   /* VARIABLES */
 
   const [activePage, setActivePage] = useState("Préparation");
@@ -19,6 +20,14 @@ const Gestion = () => {
     { name: "Utilisateurs", icon: <Users size={24} /> },
     { name: "Carte", icon: <SquareMenu size={24} /> },
   ];
+
+  const [filters, setFilters] = useState([
+    { name: "Cachaça", active: true },
+    { name: "Rhum", active: true },
+    { name: "Tequila", active: true },
+    { name: "Vodka", active: true },
+    { name: "Sans alcool", active: true }
+  ]);
 
   const [cocktails, setCocktails] = useState([]);
   const [selectedCocktail, setSelectedCocktail] = useState(null);
@@ -219,8 +228,23 @@ const Gestion = () => {
                 ) : (
                   <>
                     <h2 className='text-hr'><span>Cocktails</span></h2>
+                    <div className='filter-container'>
+                      {filters.map((filter,index) => (
+                        <div className={`filter-element ${filter.active ? 'active' : ''}`}
+                          onClick={() => setFilters(filters.map((filter,i) =>
+                            i === index ? { ...filter, active: !filter.active } : filter
+                          ))}
+                        >{filter.name}</div>
+                      ))}
+                      <div className='filter-cross'
+                        onClick={() => setFilters(filters.map((filter) => ({...filter, active: false})))}
+                      ><X/></div>
+                    </div>
                     <div className='article-row-container'>
-                      {cocktails.filter(a => a.type==='COCKTAIL').map((cocktail) => (
+                      {cocktails.filter(a =>
+                        a.type==='COCKTAIL' &&
+                        filters.filter(b => b.active).map(b => b.name).includes(a.spirit))
+                      .map((cocktail) => (
                         <div 
                           key={cocktail.id}
                           onClick={() => {
