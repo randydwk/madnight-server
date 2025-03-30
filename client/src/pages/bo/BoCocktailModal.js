@@ -56,9 +56,9 @@ const BoCocktailModal = ({ isOpen, onRequestClose, cocktail, onMake }) => {
         <p className='text-center' style={{color:'var(--danger)'}}>Rupture de stock</p>}
 
         <ul style={{lineHeight:'22px'}}>
-          <li>Verre {cocktail.glass}</li>
-          {cocktail.instructions ? <li>{cocktail.instructions}</li>:''}
-          <br/>
+          {cocktail.instructions && <>
+            <li>{cocktail.instructions}</li>
+          <br/></>}
           
           {ingredients?ingredients.sort((a,b) => a.step-b.step).map((ingredient, index) => (
               <li key={index} style={{color:(ingredient.stock<ingredient.quantity?'var(--text-soft)':'var(--text)')}}>

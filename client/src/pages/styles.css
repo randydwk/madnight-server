@@ -136,6 +136,7 @@ h1 {
     justify-content: center;
     gap: 8px;
     padding: 5px;
+    cursor: pointer;
 }
 
 .btn-success {
@@ -150,7 +151,7 @@ h1 {
     background-color: var(--info);
 }
 
-.btn-big-white {
+.btn-big {
     background-color: var(--background);
     color: var(--text);
     border: solid 1px white;
@@ -164,7 +165,7 @@ h1 {
     padding: 10px;
 }
 
-.btn-big-white:active, .btn-big-white:disabled {
+.btn-big:active, .btn-big:disabled {
     background-color: var(--text);
     color: var(--background);
 }
@@ -177,6 +178,7 @@ h1 {
     border: 1px solid var(--text);
     padding: 3px;
     background-color: var(--background-soft);
+    cursor: pointer;
 }
 
 .stock-container, .user-container {
@@ -353,7 +355,7 @@ p.cocktail-name, p.stock-name {
 }
 
 .toolbar-space {
-    height: 80px;
+    height: 70px;
 }
  
 
@@ -388,10 +390,19 @@ p.cocktail-name, p.stock-name {
 
 .modal-button {
     text-align: center;
+    margin-block-start: 0;
     margin-block-end: 0;
+    margin: 10px 5%;
     cursor: pointer;
     border: 1px solid var(--text);
-    padding: 2px;
+    padding: 3px 0;
+    font-size: 1.1em;
+    width: 90%;
+}
+
+input.modal-button {
+    border: 1px white solid;
+    color: var(--background);
 }
 
 .modal-input {

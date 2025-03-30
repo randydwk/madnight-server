@@ -47,7 +47,6 @@ const Home = () => {
                 <div 
                   key={cocktail.id}
                   onClick={() => openModal(cocktail)}
-                  style={{ cursor: 'pointer' }}
                 >
                   <Cocktail 
                     cocktail={cocktail}
@@ -61,7 +60,6 @@ const Home = () => {
                 <div 
                   key={cocktail.id}
                   onClick={() => openModal(cocktail)}
-                  style={{ cursor: 'pointer' }}
                 >
                   <Cocktail 
                     cocktail={cocktail}
@@ -75,7 +73,6 @@ const Home = () => {
                 <div 
                   key={cocktail.id}
                   onClick={() => openModal(cocktail)}
-                  style={{ cursor: 'pointer' }}
                 >
                   <Cocktail 
                     cocktail={cocktail}

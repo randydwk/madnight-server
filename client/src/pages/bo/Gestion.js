@@ -1,12 +1,11 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import BoCocktail from './BoCocktail';
 import BoIngredient from './BoIngredient';
-import BoGlass from './BoGlass';
 import BoUser from './BoUser';
 import BoCocktailModal from './BoCocktailModal';
 import BoIngredientModal from './BoIngredientModal';
-import BoGlassModal from './BoGlassModal';
-import { Martini, Box, Users, SquareMenu, Trash2, ArrowLeftCircle, Check, Loader } from 'lucide-react';
+import BoUserModal from './BoUserModal';
+import { Martini, Box, Users, SquareMenu, Trash2, ArrowLeftCircle, Check, Loader, PlusCircle } from 'lucide-react';
 import '../styles.css';
 
 const Gestion = () => {
@@ -29,9 +28,7 @@ const Gestion = () => {
   const [selectedIngredient, setSelectedIngredient] = useState(null);
   const [ingredientModalIsOpen, setIngredientModalIsOpen] = useState(false);
 
-  const [glasses, setGlasses] = useState([]);
-  const [selectedGlass, setSelectedGlass] = useState(null);
-  const [glassModalIsOpen, setGlassModalIsOpen] = useState(false);
+  const [userModalIsOpen, setUserModalIsOpen] = useState(false);
 
   const [users, setUsers] = useState([]);
   const [selectUser, setSelectUser] = useState(false);
@@ -63,11 +60,6 @@ const Gestion = () => {
       .then((res) => res.json())
       .then((data) => setIngredients(data.sort((a, b) => a.name.localeCompare(b.name))))
       .catch((error) => console.error("Error fetching ingredients:", error));
-
-    fetch("/glass")
-      .then((res) => res.json())
-      .then((data) => setGlasses(data.sort((a, b) => a.name.localeCompare(b.name))))
-      .catch((error) => console.error("Error fetching glasses:", error));
 
     fetchUsers();
   }, [fetchUsers]);
@@ -146,6 +138,23 @@ const Gestion = () => {
     fetchUsers();
   }
 
+  const handleDeleteUser = async (user) => {
+    try {
+      const response = await fetch(`/deleteuser`, {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({userId:user.id}),
+      });
+      if (!response.ok) alert('Impossible de supprimer l\'utilisateur.');
+    } catch (error) {
+      console.error('Error deleting user :', error);
+      alert('Error deleting user.');
+    }
+    fetchUsers();
+  }
+
   /* PREPARE LIST */
 
   const [prepareList, setPrepareList] = useState([]);
@@ -161,7 +170,7 @@ const Gestion = () => {
 
   /* MODALES */
 
-  const openModal = (cocktail) => {
+  const openCocktailModal = (cocktail) => {
     document.body.classList.add('no-scroll');
     setSelectedCocktail(cocktail);
     setCocktailModalIsOpen(true);
@@ -187,17 +196,15 @@ const Gestion = () => {
     fetchAll();
   };
 
-  const openGlassModal = (glass) => {
+  const openUserModal = () => {
     document.body.classList.add('no-scroll');
-    setSelectedGlass(glass);
-    setGlassModalIsOpen(true);
+    setUserModalIsOpen(true);
   };
 
-  const closeGlassModal = () => {
+  const closeUserModal = () => {
     document.body.classList.remove('no-scroll');
-    setGlassModalIsOpen(false);
-    setSelectedGlass(null);
-    fetchAll();
+    setUserModalIsOpen(false);
+    fetchUsers();
   };
 
   return (
@@ -222,7 +229,7 @@ const Gestion = () => {
                           }}
                           onPointerDown={(e) => {
                             e.preventDefault();
-                            const timer = setTimeout(() => openModal(cocktail),300);
+                            const timer = setTimeout(() => openCocktailModal(cocktail),300);
                             const cancelPress = () => {
                               clearTimeout(timer);
                               document.removeEventListener("pointerup", cancelPress);
@@ -235,7 +242,6 @@ const Gestion = () => {
                           }}
                           onContextMenu={(e) => e.preventDefault()}
                           onTouchStart={(e) => e.preventDefault()}
-                          style={{ cursor: 'pointer' }}
                         >
                           <BoCocktail
                             cocktail={cocktail}
@@ -254,7 +260,7 @@ const Gestion = () => {
                           }}
                           onPointerDown={(e) => {
                             e.preventDefault();
-                            const timer = setTimeout(() => openModal(cocktail),300);
+                            const timer = setTimeout(() => openCocktailModal(cocktail),300);
                             const cancelPress = () => {
                               clearTimeout(timer);
                               document.removeEventListener("pointerup", cancelPress);
@@ -267,7 +273,6 @@ const Gestion = () => {
                           }}
                           onContextMenu={(e) => e.preventDefault()}
                           onTouchStart={(e) => e.preventDefault()}
-                          style={{ cursor: 'pointer' }}
                         >
                           <BoCocktail 
                             cocktail={cocktail}
@@ -286,7 +291,7 @@ const Gestion = () => {
                           }}
                           onPointerDown={(e) => {
                             e.preventDefault();
-                            const timer = setTimeout(() => openModal(cocktail),300);
+                            const timer = setTimeout(() => openCocktailModal(cocktail),300);
                             const cancelPress = () => {
                               clearTimeout(timer);
                               document.removeEventListener("pointerup", cancelPress);
@@ -299,7 +304,6 @@ const Gestion = () => {
                           }}
                           onContextMenu={(e) => e.preventDefault()}
                           onTouchStart={(e) => e.preventDefault()}
-                          style={{ cursor: 'pointer' }}
                         >
                           <BoCocktail 
                             cocktail={cocktail}
@@ -324,7 +328,6 @@ const Gestion = () => {
                       addPrepareCocktail({cocktail:selectedCocktail,user:user,id:selectedCocktail.id.toLocaleString()+Math.floor(Math.random()*100000)});
                       setSelectUser(false);
                     }}
-                    style={{ cursor: 'pointer' }}
                   >
                     <BoUser
                       user={user}
@@ -359,9 +362,8 @@ const Gestion = () => {
               </tbody>
             </table>
             {prepareList.length>0 && <>
-              <button className='btn-big-white' disabled={prepareLoading}
+              <button className='btn-big' disabled={prepareLoading}
                 onClick={() => validatePreparation()}
-                style={{cursor:'pointer'}}
               >
                 {prepareLoading?(
                   <><Loader size={20}/> Valider la préparation</>
@@ -377,7 +379,7 @@ const Gestion = () => {
         
       {activePage === "Stocks" && <>
         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-          {ingredients.length === 0 || glasses.length === 0 ? (
+          {ingredients.length === 0 ? (
             <i style={{marginTop:'10px'}}>Chargement...</i>
           ) : (
             <>
@@ -388,7 +390,6 @@ const Gestion = () => {
                     <div
                       key={ingredient.id}
                       onClick={() => openIngredientModal(ingredient)}
-                      style={{ cursor: 'pointer' }}
                     >
                       <BoIngredient 
                         name={ingredient.name} 
@@ -400,22 +401,6 @@ const Gestion = () => {
                   ))}
                 </div>
               ))}
-              <h2 className='text-hr'><span>Vaisselle</span></h2>
-              <div className='article-row-container'>
-                {glasses.sort((a,b) => b.volume-a.volume).map((glass) => (
-                  <div
-                    key={glass.id}
-                    onClick={() => openGlassModal(glass)}
-                    style={{ cursor: 'pointer' }}
-                  >
-                    <BoGlass
-                      name={glass.name} 
-                      img={glass.img} 
-                      stock={glass.stock}
-                    />
-                  </div>
-                ))}
-              </div>
             </>
           )}
         </div>
@@ -426,6 +411,9 @@ const Gestion = () => {
         <div className='article-column-container'>
           <h2 className='text-hr'><span>Utilisateurs</span></h2>
         </div>
+        <button className='btn-success'
+          onClick={() => openUserModal()}
+        ><PlusCircle size={20}/> Créer un utilisateur</button>
         {users.sort((a,b) => {
           if (b.active !== a.active) return b.active - a.active;
           return a.name.localeCompare(b.name);
@@ -480,7 +468,13 @@ const Gestion = () => {
                   </tbody>
                 </table>
               </>}
-              <button className='btn-danger'><Trash2 size={20}/> Supprimer l'utilisateur</button>
+              <button className='btn-danger'
+                onClick={() => {
+                  if (window.confirm(`Êtes-vous sûr de vouloir supprimer ${user.name} ?`)) {
+                    handleDeleteUser(user);
+                  }
+                }}
+              ><Trash2 size={20}/> Supprimer l'utilisateur</button>
             </div>
           </>
         )})}
@@ -518,10 +512,9 @@ const Gestion = () => {
         ingredient={selectedIngredient}
       />
 
-      <BoGlassModal
-        isOpen={glassModalIsOpen}
-        onRequestClose={closeGlassModal}
-        glass={selectedGlass}
+      <BoUserModal
+        isOpen={userModalIsOpen}
+        onRequestClose={closeUserModal}
       />
 
     </div>
