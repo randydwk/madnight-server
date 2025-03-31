@@ -275,7 +275,7 @@ const Gestion = () => {
                         {cocktails.filter(a =>
                           a.type===cat
                           && (cat!=='COCKTAIL' || filters.filter(b => b.active).map(b => b.name).includes(a.spirit))
-                        ).map((cocktail) => (
+                        ).sort((a,b) => a.menu_order-b.menu_order).map((cocktail) => (
                           <div 
                             key={cocktail.id}
                             onClick={() => {

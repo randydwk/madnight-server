@@ -83,7 +83,7 @@ const Home = () => {
                 {cocktails.filter(a =>
                   a.type==='COCKTAIL' &&
                   filters.filter(b => b.active).map(b => b.name).includes(a.spirit))
-                .map((cocktail) => (
+                .sort((a,b) => a.menu_order-b.menu_order).map((cocktail) => (
                   <div 
                     key={cocktail.id}
                     onClick={() => openModal(cocktail)}
@@ -98,7 +98,7 @@ const Home = () => {
             {activePage === "Shooters" && <>
               <h2 className='text-hr'><span>Shooters</span></h2>
               <div className='article-row-container fo'>
-                {cocktails.filter(a => a.type==='SHOOTER').map((cocktail) => (
+                {cocktails.filter(a => a.type==='SHOOTER').sort((a,b) => a.menu_order-b.menu_order).map((cocktail) => (
                   <div 
                     key={cocktail.id}
                     onClick={() => openModal(cocktail)}
@@ -113,7 +113,7 @@ const Home = () => {
             {activePage === "Bières" && <>
               <h2 className='text-hr'><span>Bières</span></h2>
               <div className='article-row-container fo'>
-                {cocktails.filter(a => a.type==='BEER').map((cocktail) => (
+                {cocktails.filter(a => a.type==='BEER').sort((a,b) => a.menu_order-b.menu_order).map((cocktail) => (
                   <div 
                     key={cocktail.id}
                     onClick={() => openModal(cocktail)}
