@@ -178,6 +178,7 @@ h1 {
     text-align: left;
     width: 99%;
     margin-left: 1%;
+    margin-bottom: 5px;
     flex-wrap: wrap;
 }
 
@@ -442,15 +443,6 @@ p.cocktail-name, p.stock-name {
 input.modal-button {
     border: 1px white solid;
     color: var(--background);
-}
-
-.modal-input {
-    text-align: center;
-    border: 1px solid var(--text);
-    padding: 8px;
-    width: 100%;
-    box-sizing: border-box;
-    font-size: 16px;
 }
 
 .no-scroll {

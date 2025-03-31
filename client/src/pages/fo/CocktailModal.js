@@ -40,7 +40,7 @@ const CocktailModal = ({ isOpen, onRequestClose, cocktail }) => {
               ingredient.showclient?<p className='text-center' style={{margin:'5px'}} key={index}>{ingredient.name}</p>:''
           ))
         )}
-
+        <br/>
         <h3 onClick={() => {setIngredients([]); onRequestClose()}} className='modal-button btn-info'>Retour</h3>
     </Modal>
   );
