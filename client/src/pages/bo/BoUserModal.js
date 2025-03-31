@@ -7,7 +7,6 @@ const BoUserModal = ({ isOpen, onRequestClose }) => {
   const [username, setUsername] = useState("");
 
   const handleNewUser = async (username) => {
-    console.log(username);
     try {
       const response = await fetch(`/newuser`, {
         method: 'POST',

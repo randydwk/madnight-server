@@ -163,6 +163,7 @@ h1 {
     justify-content: center;
     gap: 8px;
     padding: 10px;
+    cursor: pointer;
 }
 
 .btn-big:active, .btn-big:disabled {

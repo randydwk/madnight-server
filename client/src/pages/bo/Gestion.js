@@ -4,6 +4,7 @@ import BoIngredient from './BoIngredient';
 import BoUser from './BoUser';
 import BoCocktailModal from './BoCocktailModal';
 import BoIngredientModal from './BoIngredientModal';
+import BoCustomModal from './BoCustomModal';
 import BoUserModal from './BoUserModal';
 import { Martini, Box, Users, SquareMenu, Trash2, ArrowLeftCircle, Check, Loader, PlusCircle, X } from 'lucide-react';
 import '../styles.css';
@@ -36,12 +37,16 @@ const Gestion = () => {
   const [ingredients, setIngredients] = useState([]);
   const [selectedIngredient, setSelectedIngredient] = useState(null);
   const [ingredientModalIsOpen, setIngredientModalIsOpen] = useState(false);
-
+  
+  const [customModalIsOpen, setCustomModalIsOpen] = useState(false);
   const [userModalIsOpen, setUserModalIsOpen] = useState(false);
 
   const [users, setUsers] = useState([]);
   const [selectUser, setSelectUser] = useState(false);
   const [openedUser, setOpenedUser] = useState(-1);
+
+  useEffect(() => {window.scrollTo(0,0);}, [activePage]);
+  useEffect(() => {if (selectUser) window.scrollTo(0,0);}, [selectUser]);
 
   const formatDateTime = (dateString) => {
     const date = new Date(dateString);
@@ -82,14 +87,16 @@ const Gestion = () => {
       setPrepareLoading(true);
       for (let i = 0; i < prepareList.length; i++) {
         try {
-          const response = await fetch(`/cocktailmake`, {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({cocktailId:prepareList[i].cocktail.id,cocktailNb:-1}),
-          });
-          if (!response.ok) alert('Failed to validate preparation (cocktailmake).');
+          if (prepareList[i].cocktailId !== -1) {
+            const response = await fetch(`/cocktailmake`, {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+              },
+              body: JSON.stringify({cocktailId:prepareList[i].cocktail_id,cocktailNb:-1}),
+            });
+            if (!response.ok) alert('Failed to validate preparation (cocktailmake).');
+          }
 
           const response2 = await fetch(`/newpurchase`, {
             method: 'POST',
@@ -98,8 +105,8 @@ const Gestion = () => {
             },
             body: JSON.stringify({
               userId:prepareList[i].user.id,
-              cocktailName:prepareList[i].cocktail.name,
-              price:prepareList[i].cocktail.price}),
+              cocktailName:prepareList[i].cocktail,
+              price:prepareList[i].price}),
           });
           if (!response2.ok) alert('Failed to validate preparation (newpurchase).');
         } catch (error) {
@@ -170,7 +177,13 @@ const Gestion = () => {
   const [prepareLoading, setPrepareLoading] = useState(false);
 
   const addPrepareCocktail = (cocktail_user) => {
-    setPrepareList((prevList) => [...prevList, cocktail_user]);
+    setPrepareList((prevList) => [...prevList, {
+      id : cocktail_user.id,
+      cocktail : cocktail_user.cocktail.name,
+      user : cocktail_user.user,
+      price : cocktail_user.cocktail.price,
+      cocktail_id : cocktail_user.cocktail.id?cocktail_user.cocktail.id:-1
+    }]);
   }
 
   const removePrepareCocktail = (cocktail_user_id) => {
@@ -205,6 +218,20 @@ const Gestion = () => {
     fetchAll();
   };
 
+  const openCustomModal = () => {
+    document.body.classList.add('no-scroll');
+    setCustomModalIsOpen(true);
+  };
+
+  const closeCustomModal = (name='',price='') => {
+    document.body.classList.remove('no-scroll');
+    setCustomModalIsOpen(false);
+    if (name !== '' && price !== '') {
+      setSelectedCocktail({name:name,price:Number(price)});
+      setSelectUser(true);
+    }
+  };
+  
   const openUserModal = () => {
     document.body.classList.add('no-scroll');
     setUserModalIsOpen(true);
@@ -218,6 +245,8 @@ const Gestion = () => {
 
   return (
     <div>
+      {/* PREPARATION */}
+
       {activePage === "Préparation" && <>
         <div className='section-container'>
           <div className='article-column-container' style={{width:"200%"}}>
@@ -227,73 +256,64 @@ const Gestion = () => {
                   <i style={{marginTop:'10px'}}>Chargement...</i>
                 ) : (
                   <>
-                    <h2 className='text-hr'><span>Cocktails</span></h2>
-                    <div className='filter-container'>
-                      {filters.map((filter,index) => (
-                        <div className={`filter-element ${filter.active ? 'active' : ''}`}
-                          onClick={() => setFilters(filters.map((filter,i) =>
-                            i === index ? { ...filter, active: !filter.active } : filter
+                    {['COCKTAIL','SHOOTER','BEER'].map((cat) => (<>
+                      <h2 className='text-hr'><span>{cat==='COCKTAIL'?'Cocktails':(cat==='SHOOTER'?'Shooters':'Bières')}</span></h2>
+                      {cat==='COCKTAIL' &&
+                        <div className='filter-container'>
+                          {filters.map((filter,index) => (
+                            <div className={`filter-element ${filter.active ? 'active' : ''}`}
+                              onClick={() => setFilters(filters.map((filter,i) =>
+                                i === index ? { ...filter, active: !filter.active } : filter
+                              ))}
+                            >{filter.name}</div>
                           ))}
-                        >{filter.name}</div>
-                      ))}
-                      <div className='filter-cross'
-                        onClick={() => setFilters(filters.map((filter) => ({...filter, active: false})))}
-                      ><X/></div>
-                    </div>
+                          <div className='filter-cross'
+                            onClick={() => setFilters(filters.map((filter) => ({...filter, active: false})))}
+                          ><X/></div>
+                        </div>}
+                      <div className='article-row-container'>
+                        {cocktails.filter(a =>
+                          a.type===cat
+                          && (cat!=='COCKTAIL' || filters.filter(b => b.active).map(b => b.name).includes(a.spirit))
+                        ).map((cocktail) => (
+                          <div 
+                            key={cocktail.id}
+                            onClick={() => {
+                              setSelectedCocktail(cocktail);
+                              setSelectUser(true);
+                            }}
+                            onPointerDown={(e) => {
+                              e.preventDefault();
+                              const timer = setTimeout(() => openCocktailModal(cocktail),300);
+                              const cancelPress = () => {
+                                clearTimeout(timer);
+                                document.removeEventListener("pointerup", cancelPress);
+                                document.removeEventListener("pointerleave", cancelPress);
+                                document.removeEventListener("touchend", cancelPress);
+                              };
+                              document.addEventListener("pointerup", cancelPress);
+                              document.addEventListener("pointerleave", cancelPress);
+                              document.addEventListener("touchend", cancelPress);
+                            }}
+                            onContextMenu={(e) => e.preventDefault()}
+                            onTouchStart={(e) => e.preventDefault()}
+                          >
+                            <BoCocktail 
+                              cocktail={cocktail}
+                            />
+                          </div>
+                        ))}
+                      </div>
+                    </>))}
+
+                    <h2 className='text-hr'><span>Autres produits</span></h2>
                     <div className='article-row-container'>
-                      {cocktails.filter(a =>
-                        a.type==='COCKTAIL' &&
-                        filters.filter(b => b.active).map(b => b.name).includes(a.spirit))
-                      .map((cocktail) => (
+                    {cocktails.filter(a => a.type==='CUSTOM').map((cocktail) => (
                         <div 
                           key={cocktail.id}
                           onClick={() => {
                             setSelectedCocktail(cocktail);
                             setSelectUser(true);
-                          }}
-                          onPointerDown={(e) => {
-                            e.preventDefault();
-                            const timer = setTimeout(() => openCocktailModal(cocktail),300);
-                            const cancelPress = () => {
-                              clearTimeout(timer);
-                              document.removeEventListener("pointerup", cancelPress);
-                              document.removeEventListener("pointerleave", cancelPress);
-                              document.removeEventListener("touchend", cancelPress);
-                            };
-                            document.addEventListener("pointerup", cancelPress);
-                            document.addEventListener("pointerleave", cancelPress);
-                            document.addEventListener("touchend", cancelPress);
-                          }}
-                          onContextMenu={(e) => e.preventDefault()}
-                          onTouchStart={(e) => e.preventDefault()}
-                        >
-                          <BoCocktail
-                            cocktail={cocktail}
-                          />
-                        </div>
-                      ))}
-                    </div>
-                    <h2 className='text-hr'><span>Shooters</span></h2>
-                    <div className='article-row-container'>
-                      {cocktails.filter(a => a.type==='SHOOTER').map((cocktail) => (
-                        <div 
-                          key={cocktail.id}
-                          onClick={() => {
-                            setSelectedCocktail(cocktail);
-                            setSelectUser(true);
-                          }}
-                          onPointerDown={(e) => {
-                            e.preventDefault();
-                            const timer = setTimeout(() => openCocktailModal(cocktail),300);
-                            const cancelPress = () => {
-                              clearTimeout(timer);
-                              document.removeEventListener("pointerup", cancelPress);
-                              document.removeEventListener("pointerleave", cancelPress);
-                              document.removeEventListener("touchend", cancelPress);
-                            };
-                            document.addEventListener("pointerup", cancelPress);
-                            document.addEventListener("pointerleave", cancelPress);
-                            document.addEventListener("touchend", cancelPress);
                           }}
                           onContextMenu={(e) => e.preventDefault()}
                           onTouchStart={(e) => e.preventDefault()}
@@ -303,37 +323,20 @@ const Gestion = () => {
                           />
                         </div>
                       ))}
-                    </div>
-                    <h2 className='text-hr'><span>Bière</span></h2>
-                    <div className='article-row-container'>
-                      {cocktails.filter(a => a.type==='BEER').map((cocktail) => (
-                        <div 
-                          key={cocktail.id}
-                          onClick={() => {
-                            setSelectedCocktail(cocktail);
-                            setSelectUser(true);
-                          }}
-                          onPointerDown={(e) => {
-                            e.preventDefault();
-                            const timer = setTimeout(() => openCocktailModal(cocktail),300);
-                            const cancelPress = () => {
-                              clearTimeout(timer);
-                              document.removeEventListener("pointerup", cancelPress);
-                              document.removeEventListener("pointerleave", cancelPress);
-                              document.removeEventListener("touchend", cancelPress);
-                            };
-                            document.addEventListener("pointerup", cancelPress);
-                            document.addEventListener("pointerleave", cancelPress);
-                            document.addEventListener("touchend", cancelPress);
-                          }}
-                          onContextMenu={(e) => e.preventDefault()}
-                          onTouchStart={(e) => e.preventDefault()}
-                        >
-                          <BoCocktail 
-                            cocktail={cocktail}
-                          />
+                      <div
+                        onClick={() => openCustomModal()}
+                        onContextMenu={(e) => e.preventDefault()}
+                        onTouchStart={(e) => e.preventDefault()}
+                      >
+                        <div className='stock-container'>
+                          <div className='cocktail-image-wrapper'>
+                            <img src={`images/cocktail/CUSTOM/custom.jpg`} alt='Personnalisé' className='stock-image'
+                            />
+                          </div>
+                          <h3 className='stock-name'>Personnalisé</h3>
+                          <p className='stock-name'>Prix variable</p>
                         </div>
-                      ))}
+                      </div>
                     </div>
                   </>
                 )}
@@ -349,7 +352,10 @@ const Gestion = () => {
                   <div 
                     key={user.id}
                     onClick={() => {
-                      addPrepareCocktail({cocktail:selectedCocktail,user:user,id:selectedCocktail.id.toLocaleString()+Math.floor(Math.random()*100000)});
+                      addPrepareCocktail({
+                        id:(selectedCocktail.id?selectedCocktail.id.toLocaleString():'C')+Math.floor(Math.random()*100000),
+                        cocktail:selectedCocktail,
+                        user:user});
                       setSelectUser(false);
                     }}
                   >
@@ -368,9 +374,9 @@ const Gestion = () => {
               <tbody>
                 {prepareList.map((cocktail_user) => (
                   <tr>
-                    <td style={{textAlign:'left',width:'40%'}}>• {cocktail_user.cocktail.name}</td>
+                    <td style={{textAlign:'left',width:'40%'}}>• {cocktail_user.cocktail}</td>
                     <td style={{textAlign:'left',width:'35%'}}>{cocktail_user.user.name}</td>
-                    <td style={{textAlign:'right',width:'15%'}}>{(cocktail_user.cocktail.price).toLocaleString(undefined,{minimumFractionDigits:2})} €</td>
+                    <td style={{textAlign:'right',width:'15%'}}>{(cocktail_user.price).toLocaleString(undefined,{minimumFractionDigits:2})} €</td>
                     <td style={{textAlign:'right',width:'10%'}}>
                       <Trash2
                         key={cocktail_user.id}
@@ -398,7 +404,9 @@ const Gestion = () => {
           </div>
         </div>
       </>}
-        
+      
+      {/* STOCKS */}
+
       {activePage === "Stocks" && <>
         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
           {ingredients.length === 0 ? (
@@ -427,6 +435,8 @@ const Gestion = () => {
           )}
         </div>
       </>}
+
+      {/* UTILISATEURS */}
 
       {activePage === "Utilisateurs" && <>
         <div className='article-column-container'>
@@ -501,12 +511,17 @@ const Gestion = () => {
         )})}
       </>}
 
+      {/* CARTE */}
+
       {activePage === "Carte" && <>
-        <h1>Carte</h1>
+        <div className='article-column-container'>
+          <h2 className='text-hr'><span>Carte</span></h2>
+        </div>
       </>}
       
-      <div className='toolbar-space'></div>
+      {/* TOOLBAR */}
 
+      <div className='toolbar-space'></div>
       <div className="bottom-toolbar">
         {pages.map((page) => (
           <button
@@ -520,7 +535,7 @@ const Gestion = () => {
         ))}
       </div>
 
-      {/* Modals */}
+      {/* MODALES */}
 
       <BoCocktailModal
         isOpen={cocktailModalIsOpen}
@@ -532,6 +547,11 @@ const Gestion = () => {
         isOpen={ingredientModalIsOpen}
         onRequestClose={closeIngredientModal}
         ingredient={selectedIngredient}
+      />
+
+      <BoCustomModal
+        isOpen={customModalIsOpen}
+        onRequestClose={closeCustomModal}
       />
 
       <BoUserModal

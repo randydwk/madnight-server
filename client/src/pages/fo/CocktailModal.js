@@ -7,7 +7,7 @@ const CocktailModal = ({ isOpen, onRequestClose, cocktail }) => {
   const [ingredients, setIngredients] = useState([]);
 
   useEffect(() => {
-    if (cocktail) {
+    if (cocktail && cocktail.id) {
       fetch(`/cocktail/${cocktail.id}`)
         .then((res) => res.json())
         .then((data) => {
@@ -34,7 +34,7 @@ const CocktailModal = ({ isOpen, onRequestClose, cocktail }) => {
         {cocktail.maxMake>0?'':<p style={{color:'var(--danger)'}}>Rupture de stock</p>}
 
         {ingredients.length === 0 ? (
-            <i>Chargement...</i>
+            <><i>Chargement...</i><br/></>
           ) : (
           ingredients.sort((a,b) => a.step-b.step).map((ingredient, index) => (
               ingredient.showclient?<p className='text-center' style={{margin:'5px'}} key={index}>{ingredient.name}</p>:''

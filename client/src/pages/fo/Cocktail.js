@@ -5,7 +5,7 @@ const Cocktail = ({ cocktail }) => {
     <div className='cocktail-container' style={{opacity:(!cocktail.maxMake>0?'0.5':'1')}}>
       <div className="cocktail-image-wrapper">
         <img 
-          src={`images/cocktail${cocktail.type === 'BEER' ? '/beer' : (cocktail.type === 'SHOOTER' ? '/shooter' : '')}/${cocktail.img}`} 
+          src={`images/cocktail/${cocktail.type }/${cocktail.img}`} 
           alt={cocktail.name} 
           className='cocktail-image' 
         />

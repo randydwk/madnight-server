@@ -7,8 +7,7 @@ const BoCocktailModal = ({ isOpen, onRequestClose, cocktail, onMake }) => {
   const [ingredients, setIngredients] = useState([]);
 
   useEffect(() => {
-    if (cocktail) {
-      console.log(cocktail.id);
+    if (cocktail && cocktail.id) {
       fetch(`/cocktail/${cocktail.id}`)
         .then((res) => res.json())
         .then((data) => {

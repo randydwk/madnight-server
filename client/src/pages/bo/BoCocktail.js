@@ -2,10 +2,10 @@ import React from 'react';
 
 const BoCocktail = ({ cocktail }) => {
   return (
-    <div className='stock-container' style={{opacity:(!cocktail.maxMake>0?'0.5':'1')}}>
+    <div className='stock-container' style={{opacity:(cocktail.maxMake<=0&&cocktail.type!=='CUSTOM'?'0.5':'1')}}>
       <div className='cocktail-image-wrapper'>
         <img 
-          src={`images/cocktail${cocktail.type==='BEER'?'/beer':(cocktail.type==='SHOOTER'?'/shooter':'')}/${cocktail.img}`} 
+          src={`images/cocktail/${cocktail.type}/${cocktail.img}`} 
           alt={cocktail.name} 
           className='stock-image'
         />
