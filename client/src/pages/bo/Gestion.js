@@ -517,6 +517,27 @@ const Gestion = () => {
         <div className='article-column-container'>
           <h2 className='text-hr'><span>Carte</span></h2>
         </div>
+        {cocktails.map((cocktail) => (
+          <div className='recipe-container' style={{opacity:(cocktail.maxMake<=0&&cocktail.type!=='CUSTOM'?'0.5':'1')}}>
+            <img 
+              src={`images/cocktail/${cocktail.type}/${cocktail.img}`} 
+              alt={cocktail.name} 
+              className='recipe-image'
+            />
+            <div className='recipe-column'>
+              <input className="recipe-input" type="text" value={cocktail.name}></input>
+              <input className="recipe-input" type="text" value={cocktail.spirit}></input>
+              <input className="recipe-input" type="number" value={cocktail.price}></input>
+            </div>
+            <div className='recipe-column'>
+              <input type='checkbox' checked={cocktail.active} className='toggleswitch'
+                  onClick={() => 0}
+                ></input>
+              <input className="recipe-input" type="number" value={cocktail.menu_order} disabled={!cocktail.active}></input>
+              <input className="recipe-input" type="text" value={cocktail.type} disabled={!cocktail.active}></input>
+            </div>
+          </div>
+        ))}
       </>}
       
       {/* TOOLBAR */}

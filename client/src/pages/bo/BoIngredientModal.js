@@ -44,7 +44,7 @@ const BoIngredientModal = ({ isOpen, onRequestClose, ingredient }) => {
           value={quantity}
           onChange={(e) => {e.target.value=Math.max(Math.min(e.target.value,100000),0);setQuantity(e.target.value)}}
           placeholder="Quantité"
-          className='modal-button'
+          className='text-input'
           min="0"
         />
 

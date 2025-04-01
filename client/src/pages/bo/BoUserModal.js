@@ -37,7 +37,7 @@ const BoUserModal = ({ isOpen, onRequestClose }) => {
       overlayClassName="modal-overlay"
     >
         <h2 style={{marginBlockStart:'0'}}>Créer un utilisateur</h2>
-        <input type="text" placeholder="Nom d'utilisateur" className='modal-button'
+        <input type="text" placeholder="Nom d'utilisateur" className='text-input'
           onChange={(e) => setUsername(e.target.value)}
         ></input><br/>
         <br/>

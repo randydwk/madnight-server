@@ -17,15 +17,15 @@ const BoCustomModal = ({ isOpen, onRequestClose }) => {
       overlayClassName="modal-overlay"
     >
         <h2 style={{marginBlockStart:'0'}}>Produit personnalisé</h2>
-        <input type="text" placeholder="Nom du produit" value={customName} className='modal-button'
+        <input type="text" placeholder="Nom du produit" value={customName} className='text-input'
           onChange={(e) => setCustomName(e.target.value)}
         ></input><br/>
-        <input type="number" placeholder="Prix" value={customPrice} className='modal-button'
+        <input type="number" placeholder="Prix" value={customPrice} className='text-input'
           onChange={(e) => setCustomPrice(e.target.value)}
         ></input><br/>
         <br/>
-        <h3 onClick={() => onRequestClose(customName,customPrice)} className='modal-button btn-success'>Valider le produit</h3>
-        <h3 onClick={onRequestClose} className='modal-button btn-info'>Retour</h3>
+        <h3 onClick={() => onRequestClose(customName,customPrice)} className='text-input btn-success'>Valider le produit</h3>
+        <h3 onClick={onRequestClose} className='text-input btn-info'>Retour</h3>
     </Modal>
   );
 };
