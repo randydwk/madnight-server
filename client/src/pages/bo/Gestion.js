@@ -23,11 +23,13 @@ const Gestion = () => {
   ];
 
   const [filters, setFilters] = useState([
-    { name: "Cachaça", active: true },
-    { name: "Rhum", active: true },
-    { name: "Tequila", active: true },
-    { name: "Vodka", active: true },
-    { name: "Sans alcool", active: true }
+    { name: "Vodka", spirits: ["Vodka"], active: true },
+    { name: "Rhum", spirits: ["Rhum","Cachaça"], active: true },
+    { name: "Tequila", spirits: ["Tequila"], active: true },
+    { name: "Gin", spirits: ["Gin"], active: true },
+    // { name: "Whisky", spirits: ["Whisky"], active: true },
+    // { name: "Brandy", spirits: ["Brandy"], active: true },
+    { name: "Sans alcool", spirits: ["Sans alcool"], active: true }
   ]);
 
   const [cocktails, setCocktails] = useState([]);
@@ -272,9 +274,10 @@ const Gestion = () => {
                           ><X/></div>
                         </div>}
                       <div className='article-row-container'>
-                        {cocktails.filter(a =>
+                        {
+                        cocktails.filter(a =>
                           a.type===cat
-                          && (cat!=='COCKTAIL' || filters.filter(b => b.active).map(b => b.name).includes(a.spirit))
+                          && (cat!=='COCKTAIL' || filters.filter(b => b.active).map(b => b.spirits).flat().includes(a.spirit))
                         ).sort((a,b) => a.menu_order-b.menu_order).map((cocktail) => (
                           <div 
                             key={cocktail.id}
