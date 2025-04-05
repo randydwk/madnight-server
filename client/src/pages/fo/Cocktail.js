@@ -2,7 +2,7 @@ import React from 'react';
 
 const Cocktail = ({ cocktail }) => {
   return (
-    <div className='cocktail-container' style={{opacity:(!cocktail.maxMake>0?'0.5':'1')}}>
+    <div className='cocktail-container' style={{opacity:(!cocktail.maxMake>0&&cocktail.type!=='CUSTOM'?'0.5':'1')}}>
       <div className="cocktail-image-wrapper">
         <img 
           src={`images/cocktail/${cocktail.type }/${cocktail.img}`} 

@@ -24,8 +24,8 @@ const BoCustomModal = ({ isOpen, onRequestClose }) => {
           onChange={(e) => setCustomPrice(e.target.value)}
         ></input><br/>
         <br/>
-        <h3 onClick={() => onRequestClose(customName,customPrice)} className='text-input btn-success'>Valider le produit</h3>
-        <h3 onClick={onRequestClose} className='text-input btn-info'>Retour</h3>
+        <h3 onClick={() => onRequestClose(customName,customPrice)} className='modal-button btn-success'>Valider le produit</h3>
+        <h3 onClick={onRequestClose} className='modal-button btn-info'>Retour</h3>
     </Modal>
   );
 };

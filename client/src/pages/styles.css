@@ -214,7 +214,7 @@ h1 {
 
 /* Cocktail & Stock */
 
-.cocktail-container, .stock-container, .user-container, .recipe-container {
+.cocktail-container, .stock-container, .user-container {
     margin: 10px;
     text-align: center;
     border: 1px solid var(--text);
@@ -322,29 +322,30 @@ p.cocktail-name, p.stock-name {
     color: var(--text-soft);
 }
 
-/* Recipes */
+/* Cocktail Editor */
 
-.recipe-container {
+.cocktail-editor-container {
+    text-align: center;
+    border: 1px solid var(--text);
+    background-color: var(--background-soft);
     display: flex;
-    flex-direction: row;
+    flex-direction: column;
+    align-items: center;
+    width: 300px;
 }
 
-.recipe-image {
-    width: 100px;
-    height: 100px;
+.cocktail-editor-container > * {
+    margin: 10px;
+    width: 95%
+}
+
+.cocktail-editor-image {
+    width: 150px;
+    height: 150px;
     object-fit: cover;
 }
 
-.recipe-column {
-    display: flex;
-    flex-direction: column;
-}
-
-.recipe-column > * {
-    margin: 3px;
-}
-
-.recipe-input {
+.cocktail-editor-input {
     text-align: left;
     margin-block-start: 0;
     margin-block-end: 0;
@@ -352,7 +353,8 @@ p.cocktail-name, p.stock-name {
     cursor: pointer;
     padding: 3px;
     font-size: 1.05em;
-    width: 90%;
+    width: 95%;
+    box-sizing: border-box;
     border: 1px white solid;
     color: var(--background);
 }

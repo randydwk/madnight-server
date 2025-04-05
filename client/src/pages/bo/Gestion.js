@@ -8,6 +8,8 @@ import BoCustomModal from './BoCustomModal';
 import BoUserModal from './BoUserModal';
 import { Martini, Box, Users, SquareMenu, Trash2, ArrowLeftCircle, Check, Loader, PlusCircle, X } from 'lucide-react';
 import '../styles.css';
+import CocktailEditor from './CocktailEditor';
+import Cocktail from '../fo/Cocktail';
 
 const Gestion = () => {
 
@@ -46,6 +48,8 @@ const Gestion = () => {
   const [users, setUsers] = useState([]);
   const [selectUser, setSelectUser] = useState(false);
   const [openedUser, setOpenedUser] = useState(-1);
+
+  const [editedCocktail, setEditedCocktail] = useState(null);
 
   useEffect(() => {window.scrollTo(0,0);}, [activePage]);
   useEffect(() => {if (selectUser) window.scrollTo(0,0);}, [selectUser]);
@@ -519,28 +523,31 @@ const Gestion = () => {
       {activePage === "Carte" && <>
         <div className='article-column-container'>
           <h2 className='text-hr'><span>Carte</span></h2>
+          {editedCocktail !== null ? <>
+            <CocktailEditor key={editedCocktail.id} cocktail={editedCocktail} />
+          </> : <>
+            <button className='btn-success'
+              onClick={() => openUserModal()}
+            ><PlusCircle size={20}/> Créer un produit</button>
+            <div className='article-row-container'>
+              {['COCKTAIL','SHOOTER','BEER','CUSTOM'].map((type) => (
+                cocktails.filter(a => a.type===type).sort((a,b) => a.menu_order-b.menu_order).map((cocktail) => (
+                  <div key={cocktail.id}
+                    onClick={() => {
+                      setEditedCocktail(cocktail);
+                    }}
+                    onContextMenu={(e) => e.preventDefault()}
+                    onTouchStart={(e) => e.preventDefault()}
+                    >
+                    <Cocktail
+                      cocktail={cocktail}
+                    />
+                  </div>
+                ))
+              ))}
+            </div>
+          </>}
         </div>
-        {cocktails.map((cocktail) => (
-          <div className='recipe-container' style={{opacity:(cocktail.maxMake<=0&&cocktail.type!=='CUSTOM'?'0.5':'1')}}>
-            <img 
-              src={`images/cocktail/${cocktail.type}/${cocktail.img}`} 
-              alt={cocktail.name} 
-              className='recipe-image'
-            />
-            <div className='recipe-column'>
-              <input className="recipe-input" type="text" value={cocktail.name}></input>
-              <input className="recipe-input" type="text" value={cocktail.spirit}></input>
-              <input className="recipe-input" type="number" value={cocktail.price}></input>
-            </div>
-            <div className='recipe-column'>
-              <input type='checkbox' checked={cocktail.active} className='toggleswitch'
-                  onClick={() => 0}
-                ></input>
-              <input className="recipe-input" type="number" value={cocktail.menu_order} disabled={!cocktail.active}></input>
-              <input className="recipe-input" type="text" value={cocktail.type} disabled={!cocktail.active}></input>
-            </div>
-          </div>
-        ))}
       </>}
       
       {/* TOOLBAR */}
