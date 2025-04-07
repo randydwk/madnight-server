@@ -1,31 +1,16 @@
 import React, { useEffect, useState } from 'react';
+import { drinks, spiritueux } from '../data/data';
 import Cocktail from './Cocktail';
 import CocktailModal from './CocktailModal';
 import '../styles.css';
-import { Beer, GlassWater, Martini, X } from 'lucide-react';
+import { X } from 'lucide-react';
 
 const Home = () => {
 
   /* VARIABLES */
 
   const [activePage, setActivePage] = useState("Cocktails");
-
-  const pages = [
-    { name: "Cocktails", keyword: 'COCKTAIL', icon: <Martini size={24} /> },
-    { name: "Shooters", keyword: 'SHOOTER', icon: <GlassWater size={24} /> },
-    { name: "Bières", keyword: 'BEER', icon: <Beer size={24} /> }
-  ];
-
-  const [filters, setFilters] = useState([
-    { name: "Vodka", spirits: ["Vodka"], active: true },
-    { name: "Rhum", spirits: ["Rhum","Cachaça"], active: true },
-    { name: "Tequila", spirits: ["Tequila"], active: true },
-    { name: "Gin", spirits: ["Gin"], active: true },
-    { name: "Whisky", spirits: ["Whisky"], active: true },
-    { name: "Brandy", spirits: ["Brandy"], active: true },
-    { name: "Sans alcool", spirits: ["Sans alcool"], active: true }
-  ]);
-
+  const [filters, setFilters] = useState(spiritueux);
   const [cocktails, setCocktails] = useState([]);
   const [selectedCocktail, setSelectedCocktail] = useState(null);
   const [modalIsOpen, setModalIsOpen] = useState(false);
@@ -67,10 +52,10 @@ const Home = () => {
           <i>Chargement...</i>
         ) : (
           <>
-            {pages.map((page) => activePage === page.name && <>
-                <h2 className='text-hr'><span>{page.name}</span></h2>
+            {drinks.map((drink) => activePage === drink.title && <>
+                <h2 className='text-hr'><span>{drink.title}</span></h2>
 
-                {page.keyword === "COCKTAIL" &&
+                {drink.type === "COCKTAIL" &&
                   <div className='filter-container fo'>
                     {filters.map((filter,index) => (
                       <div className={`filter-element ${filter.active ? 'active' : ''}`}
@@ -86,7 +71,7 @@ const Home = () => {
                 }
 
                 <div className='article-row-container fo'>
-                  {cocktails.filter(a => a.type===page.keyword && a.active
+                  {cocktails.filter(a => a.type===drink.type && a.active
                   && (a.type!=='COCKTAIL' || filters.filter(b => b.active).map(b => b.spirits).flat().includes(a.spirit))
                   ).sort((a,b) => a.menu_order-b.menu_order).map((cocktail) => (
                     <div 
@@ -105,20 +90,20 @@ const Home = () => {
         )}
       </div>
       <p className='text-center' style={{color:'var(--text-soft)!important',textDecoration:'none'}}>
-        <a href="/gestion" style={{color:'var(--text-soft)!important',textDecoration:'none'}}>©</a>
-        &nbsp;MAD•NIGHT by Maddy 2025
+        {/* <a href="/gestion" style={{color:'var(--text-soft)!important',textDecoration:'none'}}>©</a> */}
+        ©&nbsp;MAD•NIGHT by Maddy 2025
       </p>
       <div className='toolbar-space'></div>
 
       <div className="bottom-toolbar">
-        {pages.map((page) => (cocktails.filter((a) => a.active&&a.type===page.keyword).length>0 &&
+        {drinks.map((drink) => (drink.type!=='CUSTOM' && cocktails.filter((a) => a.active&&a.type===drink.type).length>0 &&
           <button
-            key={page.name}
-            onClick={() => setActivePage(page.name)}
-            className={`toolbar-button ${activePage === page.name ? "active" : ""}`}
+            key={drink.title}
+            onClick={() => setActivePage(drink.title)}
+            className={`toolbar-button ${activePage === drink.title ? "active" : ""}`}
           >
-            {page.icon}
-            <span style={{paddingTop:"5px"}}>{page.name}</span>
+            {drink.icon}
+            <span style={{paddingTop:"5px"}}>{drink.title}</span>
           </button>
         ))}
       </div>

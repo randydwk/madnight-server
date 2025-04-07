@@ -59,6 +59,7 @@ h1 {
     display: flex;
     flex-direction: column;
     align-items: center;
+    width: 100%;
 }
 
 .article-row-container {
@@ -78,6 +79,7 @@ h1 {
 
 .article-list-container {
     width: 100%;
+    max-width: 560px;
     text-align: center;
     flex-wrap: wrap;
     justify-content: center;

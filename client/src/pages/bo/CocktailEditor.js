@@ -1,7 +1,7 @@
 import { ArrowBigDownIcon, ArrowBigUpIcon, ArrowLeftCircle, PlusCircle, Save, Trash2 } from 'lucide-react';
 import { useState } from 'react';
 
-export default function CocktailEditor({ cocktail, ingredients, handleCancel }) {
+export default function CocktailEditor({ cocktail, ingredients, drinks, filters, handleCancel }) {
   const [formData, setFormData] = useState({ ...cocktail });
 
   const handleChange = (e) => {
@@ -58,7 +58,7 @@ export default function CocktailEditor({ cocktail, ingredients, handleCancel }) 
       handleCancel();
     } catch (err) {
       console.error(err);
-      alert('Error saving cocktail');
+      alert('Erreur d\'enregistrement : un produit existe peut-être déjà avec ce nom.');
     }
   };
   
@@ -93,28 +93,32 @@ export default function CocktailEditor({ cocktail, ingredients, handleCancel }) 
       <div className='cocktail-editor-container' style={{width:'100%'}}>
         <div className="cocktail-editor-column" style={{width:'20%'}}>
           <img
-            src={`images/cocktail/${cocktail.img}`}
+            src={`images/cocktail/${formData.img}`}
             alt={cocktail.name}
             className='cocktail-editor-image'
           />
 
+          <p>Image</p>
+          <input className="cocktail-editor-input" type="text" name="img" value={formData.img} onChange={handleChange}/>
+
           <p>Nom</p>
           <input className="cocktail-editor-input" type="text" name="name" value={formData.name} onChange={handleChange}/>
 
-          <p>Type</p>
+          <p>Catégorie</p>
           <select className='cocktail-editor-input' name="type" value={formData.type} onChange={handleChange}>
-            {['COCKTAIL', 'SHOOTER', 'BEER', 'CUSTOM'].map((type) => (
-              <option key={type} value={type}>
-                {type.charAt(0) + type.slice(1).toLowerCase()}
+            {drinks.map((drink) => (
+              <option key={drink.type} value={drink.type}>
+                {drink.title}
               </option>
             ))}
           </select>
 
           <p>Spiritueux</p>
-          <select className='cocktail-editor-input' name="spirit" value={formData.spirit} onChange={handleChange}>
-            {['', 'Vodka', 'Rhum', 'Cachaça', 'Tequila', 'Gin', 'Whisky', 'Brandy', 'Sans alcool'].map((type) => (
-              <option key={type} value={type}>
-                {type===''?'Autre':type}
+          <select className='cocktail-editor-input' name="spirit" value={formData.spirit} onChange={handleChange} disabled={formData.type!=='COCKTAIL'}>
+           <option key={''} value={''}>Autre</option>
+            {filters.map((filter) => (
+              <option key={filter.name} value={filter.name}>
+                {filter.name}
               </option>
             ))}
           </select>

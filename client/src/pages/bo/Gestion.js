@@ -1,4 +1,5 @@
 import React, { useCallback, useEffect, useState } from 'react';
+import { drinks, stock_types, spiritueux } from '../data/data';
 import BoCocktail from './BoCocktail';
 import BoIngredient from './BoIngredient';
 import BoUser from './BoUser';
@@ -6,7 +7,7 @@ import BoCocktailModal from './BoCocktailModal';
 import BoIngredientModal from './BoIngredientModal';
 import BoCustomModal from './BoCustomModal';
 import BoUserModal from './BoUserModal';
-import { Martini, Box, Users, SquareMenu, Trash2, ArrowLeftCircle, Check, Loader, PlusCircle, X } from 'lucide-react';
+import { Trash2, ArrowLeftCircle, Check, Loader, PlusCircle, X, Martini, Box, Users, SquareMenu } from 'lucide-react';
 import '../styles.css';
 import CocktailEditor from './CocktailEditor';
 import BoCocktailFo from './BoCocktailFo';
@@ -24,22 +25,7 @@ const Gestion = () => {
     { name: "Carte", icon: <SquareMenu size={24} /> },
   ];
 
-  const drinks = [
-    {title:'Cocktails',type:'COCKTAIL'},
-    {title:'Shooters',type:'SHOOTER'},
-    {title:'Bières',type:'BEER'},
-    {title:'Autres produits',type:'CUSTOM'}
-  ];
-
-  const [filters, setFilters] = useState([
-    { name: "Vodka", spirits: ["Vodka"], active: true },
-    { name: "Rhum", spirits: ["Rhum","Cachaça"], active: true },
-    { name: "Tequila", spirits: ["Tequila"], active: true },
-    { name: "Gin", spirits: ["Gin"], active: true },
-    { name: "Whisky", spirits: ["Whisky"], active: true },
-    { name: "Brandy", spirits: ["Brandy"], active: true },
-    { name: "Sans alcool", spirits: ["Sans alcool"], active: true }
-  ]);
+  const [filters, setFilters] = useState(spiritueux);
 
   const [cocktails, setCocktails] = useState([]);
   const [selectedCocktail, setSelectedCocktail] = useState(null);
@@ -283,14 +269,14 @@ const Gestion = () => {
 
       {activePage === "Préparation" && <>
         <div className='section-container'>
-          <div className='article-column-container' style={{width:"200%"}}>
+          <div className='article-column-container'>
             {!selectUser ? (
               <>
                 {cocktails.length === 0 ? (
                   <i style={{marginTop:'10px'}}>Chargement...</i>
                 ) : (
                   <>
-                    {drinks.map((drink) => ((cocktails.filter((a) => a.active&&a.type===drink.type).length>0)&&<>
+                    {drinks.map((drink) => ((drink.type==='CUSTOM'||(cocktails.filter((a) => a.active&&a.type===drink.type).length>0))&&<>
                       <h2 className='text-hr'><span>{drink.title}</span></h2>
                       {drink.type==='COCKTAIL' &&
                         <div className='filter-container'>
@@ -310,7 +296,7 @@ const Gestion = () => {
                         <div onClick={() => openCustomModal()} onContextMenu={(e) => e.preventDefault()} onTouchStart={(e) => e.preventDefault()}>
                           <div className='stock-container'>
                             <div className='cocktail-image-wrapper'>
-                              <img src={`images/cocktail/custom.jpg`} alt='Personnalisé' className='stock-image'/>
+                              <img src={`images/cocktail/noimage.jpg`} alt='Personnalisé' className='stock-image'/>
                             </div>
                             <h3 className='stock-name'>Personnalisé</h3>
                             <p className='stock-name'>Prix variable</p>
@@ -426,9 +412,9 @@ const Gestion = () => {
           ) : (
             <>
               <h2 className='text-hr'><span>Ingrédients</span></h2>
-              {['ALCOOL','SOFT','SOLID','BIERE'].map((type) => (
+              {stock_types.map((stock_type) => (
                 <div className='article-row-container'>
-                  {ingredients.filter(a => a.type===type).map((ingredient) => (
+                  {ingredients.filter(a => a.type===stock_type).map((ingredient) => (
                     <div
                       key={ingredient.id}
                       onClick={() => openIngredientModal(ingredient)}
@@ -528,43 +514,46 @@ const Gestion = () => {
       {activePage === "Carte" && <>
         <div className='article-column-container'>
           {editedCocktail !== null ? <>
-            <CocktailEditor key={editedCocktail.id} cocktail={editedCocktail} ingredients={ingredients} handleCancel={() => {
+            <CocktailEditor key={editedCocktail.id} cocktail={editedCocktail} ingredients={ingredients} drinks={drinks} filters={filters} handleCancel={() => {
               setEditedCocktail(null);
               setCocktails([]);
               fetchCocktails();
             }}/>
           </> : <>
-            {cocktails.length === 0 && <i style={{marginTop:'10px'}}>Chargement...</i>}
-            {[{name:'À la carte',active:true},{name:'Produits masqués',active:false}].map((page) => (
+            {cocktails.length === 0?<i style={{marginTop:'10px'}}>Chargement...</i>:
               <>
-                <h2 className='text-hr'><span>{page.name}</span></h2>
-                <div className='article-row-container'>
-                  {['COCKTAIL','SHOOTER','BEER','CUSTOM'].map((type) => (
-                    cocktails.filter(a => a.type===type && a.active===page.active).sort((a,b) => a.menu_order-b.menu_order).map((cocktail) => (
-                      <div>
-                        <div key={cocktail.id}
-                          onClick={() => {
-                            setEditedCocktail(cocktail);
-                          }}
-                          onContextMenu={(e) => e.preventDefault()}
-                          onTouchStart={(e) => e.preventDefault()}
-                          >
-                          <BoCocktailFo
-                            cocktail={cocktail}
-                          />
-                        </div>
-                        <input type='checkbox' checked={cocktail.active} className='toggleswitch'
-                          onClick={() => {cocktailToggle(cocktail)}}
-                        ></input>
-                      </div>
-                    ))
-                  ))}
-                </div>
+                {[{name:'À la carte',active:true},{name:'Produits masqués',active:false}].map((page) => (
+                  <>
+                    <h2 className='text-hr'><span>{page.name}</span></h2>
+                    <div className='article-row-container'>
+                      {drinks.map((drink) => (
+                        cocktails.filter(a => a.type===drink.type && a.active===page.active).sort((a,b) => a.menu_order-b.menu_order).map((cocktail) => (
+                          <div>
+                            <div key={cocktail.id}
+                              onClick={() => {
+                                setEditedCocktail(cocktail);
+                              }}
+                              onContextMenu={(e) => e.preventDefault()}
+                              onTouchStart={(e) => e.preventDefault()}
+                              >
+                              <BoCocktailFo
+                                cocktail={cocktail}
+                              />
+                            </div>
+                            <input type='checkbox' checked={cocktail.active} className='toggleswitch'
+                              onClick={() => {cocktailToggle(cocktail)}}
+                            ></input>
+                          </div>
+                        ))
+                      ))}
+                    </div>
+                  </>
+                ))}
+              <button className='btn-success'
+                onClick={() => {setEditedCocktail({name:'Nouveau produit',type:'COCKTAIL',price:1,active:true,menu_order:0,img:'noimage.jpg',recipe:[]})}}
+              ><PlusCircle size={20}/> Créer un produit</button>
               </>
-            ))}
-            <button className='btn-success'
-              onClick={() => {setEditedCocktail({name:'Nouveau produit',price:1,active:true,menu_order:0,recipe:[]})}}
-            ><PlusCircle size={20}/> Créer un produit</button>
+            }
           </>}
         </div>
       </>}
