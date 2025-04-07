@@ -9,7 +9,7 @@ import BoUserModal from './BoUserModal';
 import { Martini, Box, Users, SquareMenu, Trash2, ArrowLeftCircle, Check, Loader, PlusCircle, X } from 'lucide-react';
 import '../styles.css';
 import CocktailEditor from './CocktailEditor';
-import Cocktail from '../fo/Cocktail';
+import BoCocktailFo from './BoCocktailFo';
 
 const Gestion = () => {
 
@@ -29,8 +29,8 @@ const Gestion = () => {
     { name: "Rhum", spirits: ["Rhum","Cachaça"], active: true },
     { name: "Tequila", spirits: ["Tequila"], active: true },
     { name: "Gin", spirits: ["Gin"], active: true },
-    // { name: "Whisky", spirits: ["Whisky"], active: true },
-    // { name: "Brandy", spirits: ["Brandy"], active: true },
+    { name: "Whisky", spirits: ["Whisky"], active: true },
+    { name: "Brandy", spirits: ["Brandy"], active: true },
     { name: "Sans alcool", spirits: ["Sans alcool"], active: true }
   ]);
 
@@ -61,6 +61,13 @@ const Gestion = () => {
 
   /* DATABASE */
 
+  const fetchCocktails = useCallback(() => {
+    fetch("/cocktail")
+      .then((res) => res.json())
+      .then((data) => setCocktails(data.sort((a, b) => a.id - b.id)))
+      .catch((error) => console.error("Error fetching cocktails:", error));
+  }, []);
+
   const fetchUsers = useCallback(() => {
     fetch("/user")
       .then((res) => res.json())
@@ -71,10 +78,7 @@ const Gestion = () => {
   }, []);
 
   const fetchAll = useCallback(() => {
-    fetch("/cocktail")
-      .then((res) => res.json())
-      .then((data) => setCocktails(data.sort((a, b) => a.id - b.id)))
-      .catch((error) => console.error("Error fetching cocktails:", error));
+    fetchCocktails();
 
     fetch("/ingredient")
       .then((res) => res.json())
@@ -82,7 +86,7 @@ const Gestion = () => {
       .catch((error) => console.error("Error fetching ingredients:", error));
 
     fetchUsers();
-  }, [fetchUsers]);
+  }, [fetchCocktails,fetchUsers]);
 
   useEffect(() => {
     fetchAll();
@@ -175,6 +179,23 @@ const Gestion = () => {
       alert('Error deleting user.');
     }
     fetchUsers();
+  }
+
+  const cocktailToggle = async (cocktail) => {
+    try {
+      const response = await fetch(`/cocktailactive`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({cocktailId:cocktail.id,active:!cocktail.active}),
+      });
+      if (!response.ok) alert('Failed to toggle cocktail.');
+    } catch (error) {
+      console.error('Error toggling cocktail :', error);
+      alert('Error toggling cocktail.');
+    }
+    fetchCocktails();
   }
 
   /* PREPARE LIST */
@@ -524,28 +545,40 @@ const Gestion = () => {
         <div className='article-column-container'>
           <h2 className='text-hr'><span>Carte</span></h2>
           {editedCocktail !== null ? <>
-            <CocktailEditor key={editedCocktail.id} cocktail={editedCocktail} />
+            <CocktailEditor key={editedCocktail.id} cocktail={editedCocktail} ingredients={ingredients} handleCancel={() => {
+              setEditedCocktail(null);
+              setCocktails([]);
+              fetchCocktails();
+            }}/>
           </> : <>
             <button className='btn-success'
-              onClick={() => openUserModal()}
-            ><PlusCircle size={20}/> Créer un produit</button>
-            <div className='article-row-container'>
-              {['COCKTAIL','SHOOTER','BEER','CUSTOM'].map((type) => (
-                cocktails.filter(a => a.type===type).sort((a,b) => a.menu_order-b.menu_order).map((cocktail) => (
-                  <div key={cocktail.id}
-                    onClick={() => {
-                      setEditedCocktail(cocktail);
-                    }}
-                    onContextMenu={(e) => e.preventDefault()}
-                    onTouchStart={(e) => e.preventDefault()}
-                    >
-                    <Cocktail
-                      cocktail={cocktail}
-                    />
-                  </div>
-                ))
-              ))}
-            </div>
+              onClick={() => {setEditedCocktail({name:'Nouveau produit',price:1,active:true,menu_order:0,recipe:[]})}}
+              ><PlusCircle size={20}/> Créer un produit</button>
+            {cocktails.length === 0 && <i style={{marginTop:'10px'}}>Chargement...</i>}
+            {[true,false].map((active) => (
+              <div className='article-row-container'>
+                {['COCKTAIL','SHOOTER','BEER','CUSTOM'].map((type) => (
+                  cocktails.filter(a => a.type===type && a.active===active).sort((a,b) => a.menu_order-b.menu_order).map((cocktail) => (
+                    <div>
+                      <div key={cocktail.id}
+                        onClick={() => {
+                          setEditedCocktail(cocktail);
+                        }}
+                        onContextMenu={(e) => e.preventDefault()}
+                        onTouchStart={(e) => e.preventDefault()}
+                        >
+                        <BoCocktailFo
+                          cocktail={cocktail}
+                        />
+                      </div>
+                      <input type='checkbox' checked={cocktail.active} className='toggleswitch'
+                        onClick={() => {cocktailToggle(cocktail)}}
+                      ></input>
+                    </div>
+                  ))
+                ))}
+              </div>
+            ))}
           </>}
         </div>
       </>}

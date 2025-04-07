@@ -16,13 +16,13 @@ app.get('/cocktail', async (req, res) => {
     const cocktails = cocktailsResult.rows;
 
     for (const cocktail of cocktails) {
-      const ingredientsQuery = `SELECT i.stock, r.quantity
+      const ingredientsResult = await pool.query(`SELECT i.id as ingredient_id,i.name,i.stock,i.unit,r.step,r.proportion,r.quantity,r.showclient
                                 FROM recipe r JOIN ingredient i ON r.ingredient_id = i.id
-                                WHERE r.cocktail_id = $1`;
-      const ingredientsResult = await pool.query(ingredientsQuery, [cocktail.id]);
+                                WHERE r.cocktail_id = $1`,[cocktail.id]);
       const ingredients = ingredientsResult.rows;
 
       cocktail.maxMake = Infinity;
+      cocktail.recipe = ingredients.sort((a,b) => a.step-b.step);
       for (const ingredient of ingredients) {
         const possibleCocktails = Math.floor(ingredient.stock / ingredient.quantity);
 
@@ -40,20 +40,54 @@ app.get('/cocktail', async (req, res) => {
   }
 });
 
-app.get('/cocktail/:id', async (req, res) => {
-  const cocktailId = parseInt(req.params.id, 10);
-
+app.post('/cocktail', async (req, res) => {
   try {
-    const ingredientsResult = await pool.query(`SELECT i.name,i.stock,i.unit,r.step,r.proportion,r.quantity,r.showclient
-                                                FROM recipe r JOIN ingredient i ON r.ingredient_id = i.id
-                                                WHERE r.cocktail_id = $1`,[cocktailId]);
+    const {id,name,type,spirit,price,menu_order,instructions,recipe} = req.body;
 
-    const ingredients = ingredientsResult.rows;
+    if (!name || typeof name !== 'string' || !Array.isArray(recipe)) {
+      return res.status(400).json({ error: 'Invalid data' });
+    }
 
-    res.json({ingredients});
-  } catch (error) {
-    console.error('Error fetching cocktail details:', error);
-    res.status(500).json({ message: 'Server error' });
+    let cocktailId;
+
+    if (id) {
+      // UPDATE
+      const updateQuery = `UPDATE cocktail SET name = $1, type = $2, spirit = $3, price = $4, menu_order = $5, instructions = $6
+                           WHERE id = $7 RETURNING id`;
+      const updateResult = await pool.query(updateQuery, [name,type,spirit,price,menu_order,instructions || '',id]);
+
+      if (updateResult.rowCount === 0) {
+        return res.status(404).json({ error: 'Cocktail not found' });
+      }
+
+      cocktailId = updateResult.rows[0].id;
+    } else {
+      // CREATE
+      const insertQuery = `INSERT INTO cocktail (name, type, spirit, price, menu_order, instructions)
+                           VALUES ($1, $2, $3, $4, $5, $6)
+                           RETURNING id`;
+      const insertResult = await pool.query(insertQuery, [name,type,spirit,price,menu_order,instructions || '']);
+      cocktailId = insertResult.rows[0].id;
+    }
+
+    // RECIPE
+    await pool.query('DELETE FROM recipe WHERE cocktail_id = $1', [cocktailId]);
+    const insertRecipeQuery = `INSERT INTO recipe (cocktail_id, ingredient_id, quantity, step, proportion, showclient)
+                               VALUES ($1, $2, $3, $4, $5, $6)`;
+
+    for (let i = 0; i < recipe.length; i++) {
+      const {ingredient_id,quantity,proportion,showclient} = recipe[i];
+
+      if (ingredient_id && quantity != null) {
+        await pool.query(insertRecipeQuery, [cocktailId,ingredient_id,quantity,i,proportion || '',showclient || false]);
+      }
+    }
+
+    res.status(200).json({ message: 'Cocktail saved successfully', cocktailId });
+
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).send('Server Error');
   }
 });
 
@@ -87,13 +121,40 @@ app.post('/cocktailmake', async (req, res) => {
     } finally {
       client.release();
     }
-    // if (newStock < 0) {
-    //   await client.query('ROLLBACK');
-    //   return res.status(400).json({ success: false, message: `Plus assez de ${recipe.name} en stock.` });
-    // }
   } catch (error) {
     console.error('Error making cocktail:', error);
     res.status(500).json({ success: false, message: 'Server error.' });
+  }
+});
+
+app.post('/cocktailactive', async (req, res) => {
+  try {
+    const { cocktailId, active } = req.body;
+
+    const result = await pool.query(`UPDATE cocktail SET active = $1 WHERE id = $2 RETURNING *;`,[active,cocktailId]);
+
+    if (result.rows.length === 0) {
+      return res.status(404).json({ message: 'Cocktail not found.' });
+    }
+
+    res.json(result.rows[0]);
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).send('Server Error');
+  }
+});
+
+app.delete('/cocktail/:id', async (req, res) => {
+  const cocktailId = req.params.id;
+
+  try {
+    await pool.query('DELETE FROM recipe WHERE cocktail_id = $1', [cocktailId]);
+    await pool.query('DELETE FROM cocktail WHERE id = $1', [cocktailId]);
+
+    res.status(200).json({ message: 'Cocktail deleted successfully' });
+  } catch (err) {
+    console.error('Erreur suppression cocktail:', err.message);
+    res.status(500).send('Server Error');
   }
 });
 

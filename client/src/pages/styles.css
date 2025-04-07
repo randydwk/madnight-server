@@ -325,18 +325,28 @@ p.cocktail-name, p.stock-name {
 /* Cocktail Editor */
 
 .cocktail-editor-container {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+}
+
+.cocktail-editor-container > * {
+    margin: 0 10px;
+}
+
+.cocktail-editor-column {
     text-align: center;
     border: 1px solid var(--text);
     background-color: var(--background-soft);
     display: flex;
     flex-direction: column;
     align-items: center;
-    width: 300px;
+    padding: 10px;
+    height: fit-content;
 }
 
-.cocktail-editor-container > * {
-    margin: 10px;
-    width: 95%
+.cocktail-editor-column > p {
+    margin: 15px 0 5px 0;
 }
 
 .cocktail-editor-image {
@@ -349,14 +359,26 @@ p.cocktail-name, p.stock-name {
     text-align: left;
     margin-block-start: 0;
     margin-block-end: 0;
-    margin: 3px;
+    margin: 0px;
     cursor: pointer;
     padding: 3px;
     font-size: 1.05em;
-    width: 95%;
+    width: 100%;
     box-sizing: border-box;
     border: 1px white solid;
     color: var(--background);
+}
+
+.cocktail-editor-recipe {
+    border: 1px solid white;
+    padding: 10px 10px 0 10px;
+    box-sizing: border-box;
+    width: 100%;
+    margin-top: 10px;
+}
+
+.cocktail-editor-recipe > * {
+    margin-bottom: 10px;
 }
 
 /* Toggleswitches */

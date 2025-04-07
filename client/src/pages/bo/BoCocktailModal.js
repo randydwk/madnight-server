@@ -1,24 +1,9 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import Modal from 'react-modal';
 
 Modal.setAppElement('#root');
 
 const BoCocktailModal = ({ isOpen, onRequestClose, cocktail, onMake }) => {
-  const [ingredients, setIngredients] = useState([]);
-
-  useEffect(() => {
-    if (cocktail && cocktail.id) {
-      fetch(`/cocktail/${cocktail.id}`)
-        .then((res) => res.json())
-        .then((data) => {
-          setIngredients(data.ingredients);
-        })
-        .catch((error) => {
-          console.error('Error fetching cocktail details:', error);
-        });
-    }
-  }, [cocktail]);
-
   const handleMake = async (make) => {
     try {
       const response = await fetch(`/cocktailmake`, {
@@ -59,12 +44,12 @@ const BoCocktailModal = ({ isOpen, onRequestClose, cocktail, onMake }) => {
             <li>{cocktail.instructions}</li>
           <br/></>}
           
-          {ingredients?ingredients.sort((a,b) => a.step-b.step).map((ingredient, index) => (
+          {cocktail.recipe && cocktail.recipe.sort((a,b) => a.step-b.step).map((ingredient, index) => (
               <li key={index} style={{color:(ingredient.stock<ingredient.quantity?'var(--text-soft)':'var(--text)')}}>
                 <b>{!ingredient.showclient?'+ ':''}{ingredient.name}</b> : {ingredient.proportion}
                 {ingredient.stock<ingredient.quantity?<span style={{color:'var(--danger)'}}> [reste {Math.round(ingredient.stock*100)/100+(ingredient.unit?' '+ingredient.unit:'')}]</span>:''}
               </li>
-          )):''}
+          ))}
         </ul>
 
         <h3 onClick={() => handleMake(true)} className='modal-button btn-success'>Préparer</h3>

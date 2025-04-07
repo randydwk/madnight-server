@@ -11,9 +11,9 @@ const Home = () => {
   const [activePage, setActivePage] = useState("Cocktails");
 
   const pages = [
-    { name: "Cocktails", icon: <Martini size={24} /> },
-    { name: "Shooters", icon: <GlassWater size={24} /> },
-    { name: "Bières", icon: <Beer size={24} /> }
+    { name: "Cocktails", keyword: 'COCKTAIL', icon: <Martini size={24} /> },
+    { name: "Shooters", keyword: 'SHOOTER', icon: <GlassWater size={24} /> },
+    { name: "Bières", keyword: 'BEER', icon: <Beer size={24} /> }
   ];
 
   const [filters, setFilters] = useState([
@@ -21,8 +21,8 @@ const Home = () => {
     { name: "Rhum", spirits: ["Rhum","Cachaça"], active: true },
     { name: "Tequila", spirits: ["Tequila"], active: true },
     { name: "Gin", spirits: ["Gin"], active: true },
-    // { name: "Whisky", spirits: ["Whisky"], active: true },
-    // { name: "Brandy", spirits: ["Brandy"], active: true },
+    { name: "Whisky", spirits: ["Whisky"], active: true },
+    { name: "Brandy", spirits: ["Brandy"], active: true },
     { name: "Sans alcool", spirits: ["Sans alcool"], active: true }
   ]);
 
@@ -67,66 +67,40 @@ const Home = () => {
           <i>Chargement...</i>
         ) : (
           <>
-            {activePage === "Cocktails" && <>
-              <h2 className='text-hr'><span>Cocktails</span></h2>
-              <div className='filter-container fo'>
-                {filters.map((filter,index) => (
-                  <div className={`filter-element ${filter.active ? 'active' : ''}`}
-                    onClick={() => setFilters(filters.map((filter,i) =>
-                      i === index ? { ...filter, active: !filter.active } : filter
+            {pages.map((page) => activePage === page.name && <>
+                <h2 className='text-hr'><span>{page.name}</span></h2>
+
+                {page.keyword === "COCKTAIL" &&
+                  <div className='filter-container fo'>
+                    {filters.map((filter,index) => (
+                      <div className={`filter-element ${filter.active ? 'active' : ''}`}
+                        onClick={() => setFilters(filters.map((filter,i) =>
+                          i === index ? { ...filter, active: !filter.active } : filter
+                        ))}
+                      >{filter.name}</div>
                     ))}
-                  >{filter.name}</div>
-                ))}
-                <div className='filter-cross'
-                  onClick={() => setFilters(filters.map((filter) => ({...filter, active: false})))}
-                ><X/></div>
-              </div>
-              <div className='article-row-container fo'>
-                {cocktails.filter(a =>
-                  a.type==='COCKTAIL' &&
-                  filters.filter(b => b.active).map(b => b.spirits).flat().includes(a.spirit))
-                .sort((a,b) => a.menu_order-b.menu_order).map((cocktail) => (
-                  <div 
-                    key={cocktail.id}
-                    onClick={() => openModal(cocktail)}
-                  >
-                    <Cocktail 
-                      cocktail={cocktail}
-                    />
+                    <div className='filter-cross'
+                      onClick={() => setFilters(filters.map((filter) => ({...filter, active: false})))}
+                    ><X/></div>
                   </div>
-                ))}
-              </div>
-            </>}
-            {activePage === "Shooters" && <>
-              <h2 className='text-hr'><span>Shooters</span></h2>
-              <div className='article-row-container fo'>
-                {cocktails.filter(a => a.type==='SHOOTER').sort((a,b) => a.menu_order-b.menu_order).map((cocktail) => (
-                  <div 
-                    key={cocktail.id}
-                    onClick={() => openModal(cocktail)}
-                  >
-                    <Cocktail 
-                      cocktail={cocktail}
-                    />
-                  </div>
-                ))}
-              </div>
-            </>}
-            {activePage === "Bières" && <>
-              <h2 className='text-hr'><span>Bières</span></h2>
-              <div className='article-row-container fo'>
-                {cocktails.filter(a => a.type==='BEER').sort((a,b) => a.menu_order-b.menu_order).map((cocktail) => (
-                  <div 
-                    key={cocktail.id}
-                    onClick={() => openModal(cocktail)}
-                  >
-                    <Cocktail 
-                      cocktail={cocktail}
-                    />
-                  </div>
-                ))}
-              </div>
-            </>}
+                }
+
+                <div className='article-row-container fo'>
+                  {cocktails.filter(a => a.type===page.keyword && a.active
+                  && (a.type!=='COCKTAIL' || filters.filter(b => b.active).map(b => b.spirits).flat().includes(a.spirit))
+                  ).sort((a,b) => a.menu_order-b.menu_order).map((cocktail) => (
+                    <div 
+                      key={cocktail.id}
+                      onClick={() => openModal(cocktail)}
+                    >
+                      <Cocktail 
+                        cocktail={cocktail}
+                      />
+                    </div>
+                  ))}
+                </div>
+              </>
+            )}
           </>
         )}
       </div>
@@ -137,7 +111,7 @@ const Home = () => {
       <div className='toolbar-space'></div>
 
       <div className="bottom-toolbar">
-        {pages.map((page) => (
+        {pages.map((page) => (cocktails.filter((a) => a.active&&a.type===page.keyword).length>0 &&
           <button
             key={page.name}
             onClick={() => setActivePage(page.name)}
