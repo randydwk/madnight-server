@@ -80,6 +80,7 @@ export default function CocktailEditor({ cocktail, ingredients, handleCancel }) 
 
   return (
     <>
+      <h2 className='text-hr'><span>Nouveau produit</span></h2>
       <button className='btn-success' style={{width:'200px'}}
         onClick={handleSave}
       ><Save size={20}/> Enregistrer</button>
@@ -92,7 +93,7 @@ export default function CocktailEditor({ cocktail, ingredients, handleCancel }) 
       <div className='cocktail-editor-container' style={{width:'100%'}}>
         <div className="cocktail-editor-column" style={{width:'20%'}}>
           <img
-            src={`images/cocktail/${cocktail.type}/${cocktail.img}`}
+            src={`images/cocktail/${cocktail.img}`}
             alt={cocktail.name}
             className='cocktail-editor-image'
           />

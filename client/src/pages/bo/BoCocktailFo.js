@@ -5,7 +5,7 @@ const BoCocktailFo = ({ cocktail }) => {
     <div className='cocktail-container'>
       <div className="cocktail-image-wrapper">
         <img 
-          src={`images/cocktail/${cocktail.type }/${cocktail.img}`} 
+          src={`images/cocktail/${cocktail.img}`} 
           alt={cocktail.name} 
           className='cocktail-image' 
         />
