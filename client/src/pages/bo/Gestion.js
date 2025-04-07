@@ -1,13 +1,13 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { drinks, stock_types, spiritueux } from '../data/data';
 import BoCocktail from './BoCocktail';
-import BoIngredient from './BoIngredient';
+import BoStock from './BoStock';
 import BoUser from './BoUser';
 import BoCocktailModal from './BoCocktailModal';
-import BoIngredientModal from './BoIngredientModal';
+import BoStockModal from './BoStockModal';
 import BoCustomModal from './BoCustomModal';
 import BoUserModal from './BoUserModal';
-import { Trash2, ArrowLeftCircle, Check, Loader, PlusCircle, X, Martini, Box, Users, SquareMenu } from 'lucide-react';
+import { Trash2, ArrowLeftCircle, Check, Loader, PlusCircle, X, Martini, Box, Users, ScrollText, ReceiptText, ChartNoAxesCombined } from 'lucide-react';
 import '../styles.css';
 import CocktailEditor from './CocktailEditor';
 import BoCocktailFo from './BoCocktailFo';
@@ -21,29 +21,29 @@ const Gestion = () => {
   const pages = [
     { name: "Préparation", icon: <Martini size={24} /> },
     { name: "Stocks", icon: <Box size={24} /> },
+    { name: "Carte", icon: <ScrollText size={24} /> },
     { name: "Utilisateurs", icon: <Users size={24} /> },
-    { name: "Carte", icon: <SquareMenu size={24} /> },
+    { name: "Commandes", icon: <ReceiptText size={24} /> }
   ];
 
   const [filters, setFilters] = useState(spiritueux);
 
   const [cocktails, setCocktails] = useState([]);
-  const [selectedCocktail, setSelectedCocktail] = useState(null);
-  const [cocktailModalIsOpen, setCocktailModalIsOpen] = useState(false);
-
   const [ingredients, setIngredients] = useState([]);
-  const [selectedIngredient, setSelectedIngredient] = useState(null);
-  const [ingredientModalIsOpen, setIngredientModalIsOpen] = useState(false);
-  
-  const [customModalIsOpen, setCustomModalIsOpen] = useState(false);
-  const [userModalIsOpen, setUserModalIsOpen] = useState(false);
-
   const [users, setUsers] = useState([]);
+  const [purchases, setPurchases] = useState([]);
+
+  const [selectedCocktail, setSelectedCocktail] = useState(null);
+  const [selectedIngredient, setSelectedIngredient] = useState(null);
   const [selectUser, setSelectUser] = useState(false);
   const [openedUser, setOpenedUser] = useState(-1);
-
   const [editedCocktail, setEditedCocktail] = useState(null);
-
+  
+  const [cocktailModalIsOpen, setCocktailModalIsOpen] = useState(false);
+  const [stockModalIsOpen, setStockModalIsOpen] = useState(false);
+  const [userModalIsOpen, setUserModalIsOpen] = useState(false);
+  const [customModalIsOpen, setCustomModalIsOpen] = useState(false);
+  
   useEffect(() => {window.scrollTo(0,0);}, [activePage]);
   useEffect(() => {if (selectUser) window.scrollTo(0,0);}, [selectUser]);
 
@@ -52,6 +52,10 @@ const Gestion = () => {
     return date.toLocaleDateString("fr-FR") + " " + date.toLocaleTimeString("fr-FR", { hour: "2-digit", minute: "2-digit" });
   };
 
+  const formatPrice = (price) => {
+    return price.toLocaleString(undefined,{minimumFractionDigits:2})+' €';
+  }
+
   /* DATABASE */
 
   const fetchCocktails = useCallback(() => {
@@ -59,6 +63,13 @@ const Gestion = () => {
       .then((res) => res.json())
       .then((data) => setCocktails(data.sort((a, b) => a.id - b.id)))
       .catch((error) => console.error("Error fetching cocktails:", error));
+  }, []);
+
+  const fetchIngredients = useCallback(() => {
+    fetch("/ingredient")
+      .then((res) => res.json())
+      .then((data) => setIngredients(data.sort((a, b) => a.name.localeCompare(b.name))))
+      .catch((error) => console.error("Error fetching ingredients:", error));
   }, []);
 
   const fetchUsers = useCallback(() => {
@@ -70,16 +81,21 @@ const Gestion = () => {
       .catch((error) => console.error("Error fetching users:", error));
   }, []);
 
+  const fetchPurchases = useCallback(() => {
+    fetch("/purchase")
+      .then((res) => res.json())
+      .then((data) => {
+        setPurchases(data.sort((a,b) => new Date(b.date) - new Date(a.date)));
+      })
+      .catch((error) => console.error("Error fetching purchases:", error));
+  }, []);
+
   const fetchAll = useCallback(() => {
     fetchCocktails();
-
-    fetch("/ingredient")
-      .then((res) => res.json())
-      .then((data) => setIngredients(data.sort((a, b) => a.name.localeCompare(b.name))))
-      .catch((error) => console.error("Error fetching ingredients:", error));
-
+    fetchIngredients();
     fetchUsers();
-  }, [fetchCocktails,fetchUsers]);
+    fetchPurchases();
+  }, [fetchCocktails,fetchIngredients,fetchUsers,fetchPurchases]);
 
   useEffect(() => {
     fetchAll();
@@ -155,6 +171,7 @@ const Gestion = () => {
       alert('Error refunding purchase.');
     }
     fetchUsers();
+    fetchPurchases();
   }
 
   const handleDeleteUser = async (user) => {
@@ -225,15 +242,15 @@ const Gestion = () => {
     fetchAll();
   };
 
-  const openIngredientModal = (ingredient) => {
+  const openStockModal = (ingredient) => {
     document.body.classList.add('no-scroll');
     setSelectedIngredient(ingredient);
-    setIngredientModalIsOpen(true);
+    setStockModalIsOpen(true);
   };
 
-  const closeIngredientModal = () => {
+  const closeStockModal = () => {
     document.body.classList.remove('no-scroll');
-    setIngredientModalIsOpen(false);
+    setStockModalIsOpen(false);
     setSelectedIngredient(null);
     fetchAll();
   };
@@ -374,7 +391,7 @@ const Gestion = () => {
                   <tr>
                     <td style={{textAlign:'left',width:'40%'}}>• {cocktail_user.cocktail}</td>
                     <td style={{textAlign:'left',width:'35%'}}>{cocktail_user.user.name}</td>
-                    <td style={{textAlign:'right',width:'15%'}}>{(cocktail_user.price).toLocaleString(undefined,{minimumFractionDigits:2})} €</td>
+                    <td style={{textAlign:'right',width:'15%'}}>{formatPrice(cocktail_user.price)}</td>
                     <td style={{textAlign:'right',width:'10%'}}>
                       <Trash2
                         key={cocktail_user.id}
@@ -411,15 +428,15 @@ const Gestion = () => {
             <i style={{marginTop:'10px'}}>Chargement...</i>
           ) : (
             <>
-              <h2 className='text-hr'><span>Ingrédients</span></h2>
+              <h2 className='text-hr'><span>Stocks</span></h2>
               {stock_types.map((stock_type) => (
                 <div className='article-row-container'>
                   {ingredients.filter(a => a.type===stock_type).map((ingredient) => (
                     <div
                       key={ingredient.id}
-                      onClick={() => openIngredientModal(ingredient)}
+                      onClick={() => openStockModal(ingredient)}
                     >
-                      <BoIngredient 
+                      <BoStock 
                         name={ingredient.name} 
                         img={ingredient.img} 
                         stock={ingredient.stock}
@@ -467,18 +484,18 @@ const Gestion = () => {
                 style={{cursor:'pointer',marginLeft:'10px',width:'100%'}}
               >
                 {user.name}
-                {reste>0 && <span style={{color:'var(--danger)'}}>&nbsp;&nbsp;({reste.toLocaleString(undefined,{minimumFractionDigits:2})} €)</span>}
+                {reste>0 && <span style={{color:'var(--danger)'}}>&nbsp;&nbsp;({formatPrice(reste)})</span>}
               </div>
             </div>
             <div className={'user-list-infos'+(openedUser===user.id?' opened':'')}>
               {user.purchases.length > 0 && <>
                 <div style={{margin:'10px 0 5px 12px'}}>
                   Reste à payer :&nbsp;
-                  {reste.toLocaleString(undefined,{minimumFractionDigits:2})} €
+                  {formatPrice(reste)}
                 </div>
                 <div style={{margin:'5px 0 0 12px'}}>
                   Total :&nbsp;
-                  {user.purchases.reduce((acc,purchase) => acc + purchase.price,0).toLocaleString(undefined,{minimumFractionDigits:2})} €
+                  {formatPrice(user.purchases.reduce((acc,purchase) => acc + purchase.price,0))}
                 </div>
                 <table style={{margin:'10px',width:'530px'}}>
                   <tbody>
@@ -486,7 +503,7 @@ const Gestion = () => {
                       <tr className={purchase.refunded?'user-purchase-refunded':''}>
                         <td style={{paddingBottom:'6px',textAlign:'left',width:'140px'}}>{formatDateTime(purchase.date)}</td>
                         <td style={{paddingBottom:'6px',textAlign:'left',width:'250px'}}>• {purchase.cocktail_name}</td>
-                        <td style={{paddingBottom:'6px',textAlign:'right',width:'60px'}}>{(purchase.price).toLocaleString(undefined,{minimumFractionDigits:2})} €</td>
+                        <td style={{paddingBottom:'6px',textAlign:'right',width:'60px'}}>{formatPrice(purchase.price)}</td>
                         <td style={{textAlign:'right',width:'80px'}}>
                           <input type='checkbox' checked={purchase.refunded} className='toggleswitch'
                             onClick={() => purchaseRefundToggle(purchase)}
@@ -558,6 +575,37 @@ const Gestion = () => {
         </div>
       </>}
       
+      {/* COMMANDES */}
+      
+      {activePage === "Commandes" && <>
+        <div className='article-column-container'>
+          <h2 className='text-hr'><span>Commandes</span></h2>
+          <table style={{marginTop:'0'}}>
+            <tbody>
+              {purchases.map((purchase) => <>
+                <tr style={{color:purchase.refunded?'white':'var(--danger)'}}>
+                  <td style={{width:'20%'}}>{formatDateTime(purchase.date)}</td>
+                  <td style={{width:'25%'}}>• {purchase.cocktail_name}</td>
+                  <td style={{width:'25%'}}>{purchase.username}</td>
+                  <td style={{width:'10%',textAlign:'right'}}>{formatPrice(purchase.price)}</td>
+                  <td style={{width:'10%',textAlign:'right'}}>
+                    <input type='checkbox' checked={purchase.refunded} className='toggleswitch'
+                      onClick={() => purchaseRefundToggle(purchase)}
+                    ></input>
+                  </td>
+                  <td style={{width:'10%',textAlign:'right'}}>
+                    <button
+                      onClick={() => {window.alert(`${purchase.cocktail_name} commandés : ${purchases.filter((p) => p.cocktail_name===purchase.cocktail_name).length}`);}}
+                    ><ChartNoAxesCombined size={24}/></button>
+                  </td>
+                </tr>
+              </>)}
+            </tbody>
+          </table>
+        </div>
+        </>
+      }
+
       {/* TOOLBAR */}
 
       <div className='toolbar-space'></div>
@@ -582,9 +630,9 @@ const Gestion = () => {
         cocktail={selectedCocktail}
       />
 
-      <BoIngredientModal
-        isOpen={ingredientModalIsOpen}
-        onRequestClose={closeIngredientModal}
+      <BoStockModal
+        isOpen={stockModalIsOpen}
+        onRequestClose={closeStockModal}
         ingredient={selectedIngredient}
       />
 

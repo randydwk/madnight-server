@@ -3,7 +3,7 @@ import Modal from 'react-modal';
 
 Modal.setAppElement('#root');
 
-const BoIngredientModal = ({ isOpen, onRequestClose, ingredient }) => {
+const BoStockModal = ({ isOpen, onRequestClose, ingredient }) => {
   const [quantity, setQuantity] = useState('');
 
   const handleReload = async (add) => {
@@ -55,4 +55,4 @@ const BoIngredientModal = ({ isOpen, onRequestClose, ingredient }) => {
   );
 };
 
-export default BoIngredientModal;
+export default BoStockModal;

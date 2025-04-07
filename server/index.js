@@ -99,8 +99,6 @@ app.post('/cocktailmake', async (req, res) => {
 
       await client.query('BEGIN');
 
-      await client.query(`UPDATE cocktail SET nbmade = nbmade - $1 WHERE id = $2`,[cocktailNb,cocktailId]);
-
       const {rows: recipes} = await client.query(`
         SELECT r.ingredient_id as ingredient_id, sum(r.quantity) as quantity, i.name, i.stock
         FROM recipe r JOIN ingredient i ON r.ingredient_id = i.id
@@ -265,6 +263,17 @@ app.post('/useractive', async (req, res) => {
 });
 
 // Purchase
+
+app.get('/purchase', async (req, res) => {
+  try {
+    const purchaseResult = await pool.query(`SELECT p.id,p.cocktail_name,p.price,p.refunded,p.user_id,p.date,u.name as username FROM purchase p JOIN "user" u ON p.user_id=u.id`);
+
+    res.json(purchaseResult.rows);
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).send('Server Error');
+  }
+});
 
 app.post('/newpurchase', async (req, res) => {
   try {

@@ -91,17 +91,17 @@ h1 {
     border-left: 1px solid white;
 }
 
-.article-list-container table {
+table {
     width: 90%;
     margin: 5%;
     table-layout: fixed;
 }
 
-.article-list-container table tr {
+table tr {
     height: 35px;
 }
 
-.article-list-container table tr td {
+table tr td {
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;

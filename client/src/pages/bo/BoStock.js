@@ -1,6 +1,6 @@
 import React from 'react';
 
-const BoIngredient = ({ name, img, stock, unit }) => {
+const BoStock = ({ name, img, stock, unit }) => {
   return (
     <div className='stock-container' style={{opacity:(stock<=0?'0.5':'1')}}>
       <img 
@@ -14,4 +14,4 @@ const BoIngredient = ({ name, img, stock, unit }) => {
   );
 };
 
-export default BoIngredient;
+export default BoStock;
