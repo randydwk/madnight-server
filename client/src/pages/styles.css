@@ -145,6 +145,12 @@ button {
     cursor: pointer;
 }
 
+.btn-success:disabled, .btn-danger:disabled, .btn-info:disabled {
+    color: var(--text-soft);
+    border: 1px var(--text-soft) solid;
+    opacity: 0;
+}
+
 .btn-success {
     background-color: var(--success);
 }

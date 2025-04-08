@@ -19,7 +19,8 @@ const BoCocktailFo = ({ cocktail, ingredients }) => {
           alt={cocktail.name} 
           className='cocktail-image' 
         />
-        {cocktail.spirit&&<p className='cocktail-spirit'>{cocktail.spirit}</p>}
+        {cocktail.type==='COCKTAIL'&&cocktail.spirit&&<p className='cocktail-spirit'>{cocktail.spirit}</p>}
+        {<p className='stock-tag' style={{left:'5px'}}>{cocktail.menu_order}</p>}
       </div>
       <h3 className='cocktail-name'>{cocktail.name}</h3>
       <p className='cocktail-name'>

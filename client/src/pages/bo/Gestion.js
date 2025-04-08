@@ -7,7 +7,7 @@ import BoCocktailModal from './BoCocktailModal';
 import BoStockModal from './BoStockModal';
 import BoCustomModal from './BoCustomModal';
 import BoUserModal from './BoUserModal';
-import { Trash2, ArrowLeftCircle, Check, Loader, PlusCircle, X, Martini, Box, Users, ScrollText, ReceiptText, ChartNoAxesCombined } from 'lucide-react';
+import { Trash2, ArrowLeftCircle, Check, Loader, PlusCircle, X, Martini, Box, Users, ScrollText, ReceiptText, ChartNoAxesCombined, ArrowBigLeft, ArrowBigRight } from 'lucide-react';
 import '../styles.css';
 import CocktailEditor from './CocktailEditor';
 import BoCocktailFo from './BoCocktailFo';
@@ -190,6 +190,23 @@ const Gestion = () => {
     }
     fetchUsers();
     fetchPurchases();
+  }
+
+  const moveCocktail = async (cocktail,direction) => {
+    try {
+      const response = await fetch(`/cocktailmove`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({cocktailId:cocktail.id,direction:direction}),
+      });
+      if (!response.ok) alert('Failed to move cocktail.');
+    } catch (error) {
+      console.error('Error moving cocktail :', error);
+      alert('Error moving cocktail.');
+    }
+    fetchCocktails();
   }
 
   const cocktailToggle = async (cocktail) => {
@@ -535,11 +552,19 @@ const Gestion = () => {
       {activePage === "Carte" && <>
         <div className='article-column-container'>
           {editedCocktail !== null ? <>
-            <CocktailEditor key={editedCocktail.id} cocktail={editedCocktail} ingredients={ingredients} drinks={drinks} filters={filters} handleCancel={() => {
-              setEditedCocktail(null);
-              setCocktails([]);
-              fetchCocktails();
-            }}/>
+            <CocktailEditor
+              key={editedCocktail.id}
+              cocktail={editedCocktail}
+              cocktails={cocktails}
+              ingredients={ingredients}
+              drinks={drinks}
+              filters={filters}
+              handleCancel={() => {
+                setEditedCocktail(null);
+                setCocktails([]);
+                fetchCocktails();
+              }}
+            />
           </> : <>
             {cocktails.length === 0?<i style={{marginTop:'10px'}}>Chargement...</i>:
               <>
@@ -562,9 +587,20 @@ const Gestion = () => {
                                 ingredients={ingredients}
                               />
                             </div>
-                            <input type='checkbox' checked={cocktail.active} className='toggleswitch'
-                              onClick={() => {cocktailToggle(cocktail)}}
-                            ></input>
+                            <div style={{display:'flex'}}>
+                              <button className='btn-info' style={{margin:'3px 5px 0 auto',height:'28px'}}
+                                disabled={cocktail.menu_order===0}
+                                onClick={() => moveCocktail(cocktail,-1)}>
+                                <ArrowBigLeft size={17}/>
+                              </button>
+                              <input type='checkbox' checked={cocktail.active} className='toggleswitch'
+                                onClick={() => {cocktailToggle(cocktail)}}
+                              ></input>
+                              <button className='btn-info' style={{margin:'3px auto 0 6px',height:'28px'}}
+                                onClick={() => moveCocktail(cocktail,1)}>
+                                <ArrowBigRight size={17}/>
+                              </button>
+                            </div>
                           </div>
                         ))
                       ))}
@@ -572,7 +608,7 @@ const Gestion = () => {
                   </>
                 ))}
               <button className='btn-success'
-                onClick={() => {setEditedCocktail({name:'Nouveau produit',type:'COCKTAIL',price:1,active:true,menu_order:0,img:'noimage.jpg',recipe:[]})}}
+                onClick={() => {setEditedCocktail({name:'Nouveau produit',type:'COCKTAIL',volume:0,price:0,active:true,menu_order:-1,img:'noimage.jpg',recipe:[]})}}
               ><PlusCircle size={20}/> Créer un produit</button>
               </>
             }

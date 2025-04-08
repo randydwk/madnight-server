@@ -1,11 +1,12 @@
-import { ArrowBigDownIcon, ArrowBigUpIcon, ArrowLeftCircle, BadgeEuroIcon, GlassWater, PlusCircle, Save, Trash2 } from 'lucide-react';
+import { ArrowBigDown, ArrowBigUp, ArrowLeftCircle, BadgeEuroIcon, GlassWater, PlusCircle, Save, Trash2 } from 'lucide-react';
 import { useState } from 'react';
 
-export default function CocktailEditor({ cocktail, ingredients, drinks, filters, handleCancel }) {
+export default function CocktailEditor({ cocktail, cocktails, ingredients, drinks, filters, handleCancel }) {
   const [formData, setFormData] = useState({ ...cocktail });
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
+    if (name==='type') formData.menu_order = -1;
     setFormData({
       ...formData,
       [name]: type === 'checkbox' ? checked : value
@@ -46,7 +47,8 @@ export default function CocktailEditor({ cocktail, ingredients, drinks, filters,
   }; 
 
   const handleSave = async () => {
-    console.log(formData);
+    if (formData.menu_order === -1) formData.menu_order = cocktails.filter(c => c.type===formData.type).reduce((max,c) => (
+      c.menu_order > max ? c.menu_order : max),0)+1;
     try {
       const res = await fetch('/cocktail', {
         method: 'POST',
@@ -154,9 +156,6 @@ export default function CocktailEditor({ cocktail, ingredients, drinks, filters,
             ><BadgeEuroIcon size={20}/></button>
           </div>
           <input className="cocktail-editor-input" type="number" name="price" step="0.1" value={formData.price} onChange={handleChange}/>
-
-          <p>Ordre</p>
-          <input className="cocktail-editor-input" type="number" name="menu_order" value={formData.menu_order} onChange={handleChange}/>
         </div>
 
         <div className="cocktail-editor-column" style={{width:'40%'}}>
@@ -169,10 +168,10 @@ export default function CocktailEditor({ cocktail, ingredients, drinks, filters,
                 <div style={{display:'flex',gap:'10px'}}>
                   {index!==0 && <button className="btn-info" style={{margin:'0',marginBottom:'0'}}
                     onClick={() => moveIngredient(index,'up')}>
-                  <ArrowBigUpIcon size={20} /></button>}
+                  <ArrowBigUp size={20} /></button>}
                   {index!==formData.recipe.length-1 && <button className="btn-info" style={{margin:'0',marginBottom:'0'}}
                     onClick={() => moveIngredient(index,'down')}>
-                  <ArrowBigDownIcon size={20} /></button>}
+                  <ArrowBigDown size={20} /></button>}
                   <button className="btn-danger" style={{margin:'0',marginBottom:'0'}}
                     onClick={() => handleRemoveIngredient(index)}>
                   <Trash2 size={20} /></button>
