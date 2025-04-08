@@ -1,4 +1,4 @@
-import { MinusCircle, PlusCircle, Save } from 'lucide-react';
+import { CheckCircle2, MinusCircle, PlusCircle } from 'lucide-react';
 import React, { useEffect, useState } from 'react';
 import Modal from 'react-modal';
 
@@ -84,7 +84,7 @@ const BoStockModal = ({ isOpen, onRequestClose, ingredient }) => {
           className='text-input'
           min="0"
         />
-        <h3 onClick={()=>handlePrice()} style={{marginTop:0}} className='modal-button btn-success'><Save/> Enregistrer</h3>
+        <h3 onClick={()=>handlePrice()} style={{marginTop:0}} className='modal-button btn-success'><CheckCircle2/> Valider le prix</h3>
         <br/>
         <h3 onClick={onRequestClose} className='modal-button btn-info'>Retour</h3>
     </Modal>

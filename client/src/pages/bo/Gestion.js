@@ -316,6 +316,7 @@ const Gestion = () => {
                       {drink.type==='COCKTAIL' &&
                         <div className='filter-container'>
                           {filters.map((filter,index) => (
+                            cocktails.filter(c => c.active&&c.spirit===filter.name).length>0&&
                             <div className={`filter-element ${filter.active ? 'active' : ''}`}
                               onClick={() => setFilters(filters.map((filter,i) =>
                                 i === index ? { ...filter, active: !filter.active } : filter
