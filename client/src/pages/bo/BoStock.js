@@ -9,7 +9,7 @@ const BoStock = ({ name, img, stock, unit }) => {
         className='stock-image'
       />
       <h3 className='stock-name'>{name}</h3>
-      <p className='stock-name'>{Math.round(stock*100)/100} {unit?unit:""}</p>
+      <p className='stock-name'>{Math.round(stock*100)/100}{unit?unit:""}</p>
     </div>
   );
 };

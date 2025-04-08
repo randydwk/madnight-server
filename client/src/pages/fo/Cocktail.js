@@ -12,7 +12,10 @@ const Cocktail = ({ cocktail }) => {
         {cocktail.spirit&&<p className='cocktail-spirit'>{cocktail.spirit}</p>}
       </div>
       <h3 className='cocktail-name'>{cocktail.name}</h3>
-      <p className='cocktail-name'>{(cocktail.price).toLocaleString(undefined,{minimumFractionDigits:2})} €</p>
+      <p className='cocktail-name'>
+        {cocktail.maxMake>0?<>{(cocktail.price).toLocaleString(undefined,{minimumFractionDigits:2})} € ({cocktail.volume}cl)</>:
+        <span style={{color:'var(--danger)'}}>Rupture de stock</span>}
+      </p>
     </div>
   );
 };

@@ -46,7 +46,9 @@ const BoCocktailModal = ({ isOpen, onRequestClose, cocktail, onMake }) => {
           
           {cocktail.recipe && cocktail.recipe.sort((a,b) => a.step-b.step).map((ingredient, index) => (
               <li key={index} style={{color:(ingredient.stock<ingredient.quantity?'var(--text-soft)':'var(--text)')}}>
-                <b>{!ingredient.showclient?'+ ':''}{ingredient.name}</b> {ingredient.proportion && <>: {ingredient.proportion}</>}
+                {!ingredient.showclient?'+ ':''}{ingredient.name}
+                <b style={{color:'var(--success)'}}> {ingredient.quantity>0 && `${ingredient.quantity}${ingredient.unit?ingredient.unit:''}`} </b>
+                {ingredient.proportion && <>({ingredient.proportion})</>}
                 {ingredient.stock<ingredient.quantity?<span style={{color:'var(--danger)'}}> [reste {Math.round(ingredient.stock*100)/100+(ingredient.unit?' '+ingredient.unit:'')}]</span>:''}
               </li>
           ))}

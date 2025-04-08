@@ -61,7 +61,7 @@ const Gestion = () => {
   const fetchCocktails = useCallback(() => {
     fetch("/cocktail")
       .then((res) => res.json())
-      .then((data) => setCocktails(data.sort((a, b) => a.id - b.id)))
+      .then((data) => setCocktails(data.sort((a, b) => a.menu_order - b.menu_order)))
       .catch((error) => console.error("Error fetching cocktails:", error));
   }, []);
 
@@ -189,6 +189,7 @@ const Gestion = () => {
       alert('Error deleting user.');
     }
     fetchUsers();
+    fetchPurchases();
   }
 
   const cocktailToggle = async (cocktail) => {
@@ -323,7 +324,7 @@ const Gestion = () => {
                         {cocktails.filter(a =>
                           a.type===drink.type && a.active
                           && (a.type!=='COCKTAIL' || filters.filter(b => b.active).map(b => b.spirits).flat().includes(a.spirit))
-                        ).sort((a,b) => a.menu_order-b.menu_order).map((cocktail) => (
+                        ).map((cocktail) => (
                           <div 
                             key={cocktail.id}
                             onClick={() => {
@@ -457,9 +458,12 @@ const Gestion = () => {
         <div className='article-column-container'>
           <h2 className='text-hr'><span>Utilisateurs</span></h2>
         </div>
-        <button className='btn-success'
-          onClick={() => openUserModal()}
-        ><PlusCircle size={20}/> Créer un utilisateur</button>
+        <div style={{display:'flex'}}>
+          <button className='btn-success'
+            onClick={() => openUserModal()}
+          ><PlusCircle size={20}/> Créer un utilisateur</button>
+          <p style={{margin:'15px 0 0 0'}}>{users.filter(u => u.active).length}/{users.length} personnes présentes</p>
+        </div>
         {users.sort((a,b) => {
           if (b.active !== a.active) return b.active - a.active;
           return a.name.localeCompare(b.name);
@@ -544,7 +548,7 @@ const Gestion = () => {
                     <h2 className='text-hr'><span>{page.name}</span></h2>
                     <div className='article-row-container'>
                       {drinks.map((drink) => (
-                        cocktails.filter(a => a.type===drink.type && a.active===page.active).sort((a,b) => a.menu_order-b.menu_order).map((cocktail) => (
+                        cocktails.filter(a => a.type===drink.type && a.active===page.active).map((cocktail) => (
                           <div>
                             <div key={cocktail.id}
                               onClick={() => {
@@ -555,6 +559,7 @@ const Gestion = () => {
                               >
                               <BoCocktailFo
                                 cocktail={cocktail}
+                                ingredients={ingredients}
                               />
                             </div>
                             <input type='checkbox' checked={cocktail.active} className='toggleswitch'
@@ -580,6 +585,8 @@ const Gestion = () => {
       {activePage === "Commandes" && <>
         <div className='article-column-container'>
           <h2 className='text-hr'><span>Commandes</span></h2>
+          <p style={{margin:'10px 0 5px 0'}}>Reste à payer : {formatPrice(purchases.reduce((acc, item) => {return !item.refunded ? acc + item.price : acc}, 0))}</p>
+          <p style={{margin:'0 0 10px 0'}}>Total : {formatPrice(purchases.reduce((acc, item) =>  acc + item.price, 0))}</p>
           <table style={{marginTop:'0'}}>
             <tbody>
               {purchases.map((purchase) => <>

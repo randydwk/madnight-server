@@ -21,7 +21,7 @@ const Home = () => {
     fetch('/cocktail')
       .then((res) => res.json())
       .then((data) => {
-        setCocktails(data);
+        setCocktails(data.sort((a,b) => a.menu_order-b.menu_order));
       })
       .catch((error) => {
         console.error('Error fetching data:', error);
@@ -73,7 +73,11 @@ const Home = () => {
                 <div className='article-row-container fo'>
                   {cocktails.filter(a => a.type===drink.type && a.active
                   && (a.type!=='COCKTAIL' || filters.filter(b => b.active).map(b => b.spirits).flat().includes(a.spirit))
-                  ).sort((a,b) => a.menu_order-b.menu_order).map((cocktail) => (
+                  ).sort((a,b) => {
+                    if (a.maxMake === 0 && b.maxMake !== 0) return 1;
+                    if (a.maxMake !== 0 && b.maxMake === 0) return -1;
+                    return a.menu_order-b.menu_order;
+                  }).map((cocktail) => (
                     <div 
                       key={cocktail.id}
                       onClick={() => openModal(cocktail)}
@@ -90,13 +94,12 @@ const Home = () => {
         )}
       </div>
       <p className='text-center' style={{color:'var(--text-soft)!important',textDecoration:'none'}}>
-        {/* <a href="/gestion" style={{color:'var(--text-soft)!important',textDecoration:'none'}}>©</a> */}
         ©&nbsp;MAD•NIGHT by Maddy 2025
       </p>
       <div className='toolbar-space'></div>
 
       <div className="bottom-toolbar">
-        {drinks.map((drink) => (drink.type!=='CUSTOM' && cocktails.filter((a) => a.active&&a.type===drink.type).length>0 &&
+        {drinks.map((drink) => (drink.type!=='CUSTOM' && cocktails.filter((a) => a.active&&a.maxMake>0&&a.type===drink.type).length>0 &&
           <button
             key={drink.title}
             onClick={() => setActivePage(drink.title)}

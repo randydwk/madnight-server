@@ -108,6 +108,10 @@ table tr td {
     max-width: 100%;
 }
 
+button {
+    cursor: pointer;
+}
+
 /* Separators */
 
 .text-hr {

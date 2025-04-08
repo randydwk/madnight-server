@@ -6,7 +6,7 @@ export const drinks = [
   { title: 'Bières', type: 'BEER', icon: <Beer size={24} /> },
   { title: 'Vins', type: 'WINE', icon: <Wine size={24} /> },
   { title: 'Champagnes', type: 'CHAMPAGNE', icon: <Wine size={24} />  },
-  { title: 'Autres produits', type: 'CUSTOM', icon: <Ellipsis size={24} />  },
+  { title: 'Produits personnalisés', type: 'CUSTOM', icon: <Ellipsis size={24} />  },
 ];
 
 export const stock_types = ['ALCOOL', 'SOFT', 'SOLID', 'BIERE', 'VIN', 'CHAMPAGNE'];

@@ -42,7 +42,7 @@ app.get('/cocktail', async (req, res) => {
 
 app.post('/cocktail', async (req, res) => {
   try {
-    const {id,name,type,spirit,price,menu_order,img,instructions,recipe} = req.body;
+    const {id,name,type,spirit,volume,price,menu_order,img,instructions,recipe} = req.body;
 
     if (!name || typeof name !== 'string' || !Array.isArray(recipe)) {
       return res.status(400).json({ error: 'Invalid data' });
@@ -52,9 +52,9 @@ app.post('/cocktail', async (req, res) => {
 
     if (id) {
       // UPDATE
-      const updateQuery = `UPDATE cocktail SET name = $1, type = $2, spirit = $3, price = $4, menu_order = $5, img = $6, instructions = $7
-                           WHERE id = $8 RETURNING id`;
-      const updateResult = await pool.query(updateQuery, [name,type,spirit,price,menu_order,img,instructions || '',id]);
+      const updateQuery = `UPDATE cocktail SET name = $1, type = $2, spirit = $3, volume = $4, price = $5, menu_order = $6, img = $7, instructions = $8
+                           WHERE id = $9 RETURNING id`;
+      const updateResult = await pool.query(updateQuery, [name,type,spirit,volume,price,menu_order,img,instructions || '',id]);
 
       if (updateResult.rowCount === 0) {
         return res.status(404).json({ error: 'Cocktail not found' });
@@ -63,10 +63,10 @@ app.post('/cocktail', async (req, res) => {
       cocktailId = updateResult.rows[0].id;
     } else {
       // CREATE
-      const insertQuery = `INSERT INTO cocktail (name, type, spirit, price, menu_order, img, instructions)
-                           VALUES ($1, $2, $3, $4, $5, $6, $7)
+      const insertQuery = `INSERT INTO cocktail (name, type, spirit, volume, price, menu_order, img, instructions)
+                           VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
                            RETURNING id`;
-      const insertResult = await pool.query(insertQuery, [name,type,spirit,price,menu_order,img,instructions || '']);
+      const insertResult = await pool.query(insertQuery, [name,type,spirit,volume,price,menu_order,img,instructions || '']);
       cocktailId = insertResult.rows[0].id;
     }
 

@@ -1,6 +1,16 @@
 import React from 'react';
 
-const BoCocktailFo = ({ cocktail }) => {
+const BoCocktailFo = ({ cocktail, ingredients }) => {
+  const productionPrice = () => {
+    let price = 0;
+    for (const r of cocktail.recipe) {
+      const ing = ingredients.find(i => i.id===r.ingredient_id);
+      const ing_price = ing.unit==='cl'?ing.price/100:(ing.unit==='g'?ing.price/1000:ing.price);
+      price += r.quantity * ing_price;
+    }
+    return Math.floor(price*100)/100;
+  }
+
   return (
     <div className='cocktail-container'>
       <div className="cocktail-image-wrapper">
@@ -12,7 +22,11 @@ const BoCocktailFo = ({ cocktail }) => {
         {cocktail.spirit&&<p className='cocktail-spirit'>{cocktail.spirit}</p>}
       </div>
       <h3 className='cocktail-name'>{cocktail.name}</h3>
-      <p className='cocktail-name'>{(cocktail.price).toLocaleString(undefined,{minimumFractionDigits:2})} €</p>
+      <p className='cocktail-name'>
+        <span>{cocktail.volume}cl - </span>
+        <span>{cocktail.price.toLocaleString(undefined,{minimumFractionDigits:2})} €</span>
+        <span style={{color:'var(--text-soft)'}}> ({productionPrice().toLocaleString(undefined,{minimumFractionDigits:2})} €)</span>
+      </p>
     </div>
   );
 };

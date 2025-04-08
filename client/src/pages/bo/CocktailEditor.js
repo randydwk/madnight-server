@@ -1,4 +1,4 @@
-import { ArrowBigDownIcon, ArrowBigUpIcon, ArrowLeftCircle, PlusCircle, Save, Trash2 } from 'lucide-react';
+import { ArrowBigDownIcon, ArrowBigUpIcon, ArrowLeftCircle, BadgeEuroIcon, GlassWater, PlusCircle, Save, Trash2 } from 'lucide-react';
 import { useState } from 'react';
 
 export default function CocktailEditor({ cocktail, ingredients, drinks, filters, handleCancel }) {
@@ -123,7 +123,36 @@ export default function CocktailEditor({ cocktail, ingredients, drinks, filters,
             ))}
           </select>
 
-          <p>Prix (€)</p>
+          <div style={{display:'flex'}}>
+            <p>Volume (cl)</p>
+            <button style={{paddingLeft:'1px',width:'26px',height:'26px',margin:'15px 0 0 10px'}}
+              onClick={() => {
+                let volume = 0;
+                for (const r of formData.recipe) {
+                  const ing = ingredients.find(i => i.id===r.ingredient_id)
+                  volume += r.quantity*ing.volume;
+                }
+                window.alert(`Volume sans glaçons : ${Math.round(volume)}cl`);
+              }}
+            ><GlassWater size={20}/></button>
+          </div>
+          <input className="cocktail-editor-input" type="number" name="volume" value={formData.volume} onChange={handleChange}/>
+
+          <div style={{display:'flex'}}>
+            <p>Prix (€)</p>
+            <button style={{paddingLeft:'1px',width:'26px',height:'26px',margin:'15px 0 0 10px'}}
+              onClick={() => {
+                let price = 0;
+                for (const r of formData.recipe) {
+                  const ing = ingredients.find(i => i.id===r.ingredient_id);
+                  const ing_price = ing.unit==='cl'?ing.price/100:(ing.unit==='g'?ing.price/1000:ing.price);
+                  price += r.quantity * ing_price;
+                }
+                price = Math.floor(price*100)/100;
+                window.alert(`Coût de production : ${price.toLocaleString(undefined,{minimumFractionDigits:2})} €`);
+              }}
+            ><BadgeEuroIcon size={20}/></button>
+          </div>
           <input className="cocktail-editor-input" type="number" name="price" step="0.1" value={formData.price} onChange={handleChange}/>
 
           <p>Ordre</p>
@@ -158,10 +187,11 @@ export default function CocktailEditor({ cocktail, ingredients, drinks, filters,
                     </option>
                   ))}
                 </select>
+              
+                <input className="cocktail-editor-input" type="number" step="0.1" value={recipe_step.quantity} onChange={(e) => handleRecipeChange(index, 'quantity', parseFloat(e.target.value))}/>
+                {recipe_step.ingredient_id && <>{ingredients.find(i => i.id===recipe_step.ingredient_id).unit}</>}
 
                 <input className="cocktail-editor-input" type="text" value={recipe_step.proportion} onChange={(e) => handleRecipeChange(index, 'proportion', e.target.value)}/>
-
-                <input className="cocktail-editor-input" type="number" step="0.1" value={recipe_step.quantity} onChange={(e) => handleRecipeChange(index, 'quantity', parseFloat(e.target.value))}/>
               </div>
             </div>
           ))}
