@@ -442,27 +442,32 @@ const Gestion = () => {
       {/* STOCKS */}
 
       {activePage === "Stocks" && <>
-        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-          {ingredients.length === 0 ? (
+        {ingredients.length === 0 ? (
+          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
             <i style={{marginTop:'10px'}}>Chargement...</i>
-          ) : (
-            <>
-              <h2 className='text-hr'><span>Stocks</span></h2>
-              {stock_types.map((stock_type) => (
+          </div>
+        ) : (
+          <>
+          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+            <h2 className='text-hr'><span>Stocks</span></h2>
+          </div>
+            {stock_types.map((stock_type) => (
+              <>
+                <p style={{marginLeft:'1.5%',height:'10px'}}>• {stock_type.title}</p>
                 <div className='article-row-container'>
-                  {ingredients.filter(a => a.type===stock_type).map((ingredient) => (
+                  {ingredients.filter(a => a.type===stock_type.type).map((ingredient) => (
                     <div
-                      key={ingredient.id}
-                      onClick={() => openStockModal(ingredient)}
+                    key={ingredient.id}
+                    onClick={() => openStockModal(ingredient)}
                     >
                       <BoStock ingredient={ingredient} />
                     </div>
                   ))}
                 </div>
-              ))}
-            </>
-          )}
-        </div>
+              </>
+            ))}
+          </>
+        )}
       </>}
 
       {/* UTILISATEURS */}

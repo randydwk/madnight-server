@@ -1,4 +1,4 @@
-import { ArrowBigDown, ArrowBigUp, ArrowLeftCircle, BadgeEuroIcon, GlassWater, PlusCircle, Save, Trash2 } from 'lucide-react';
+import { ArrowBigDown, ArrowBigUp, ArrowLeftCircle, BadgeEuroIcon, Beaker, Eye, GlassWater, PlusCircle, Save, Trash2 } from 'lucide-react';
 import { useState } from 'react';
 import { spiritueux } from '../data/data';
 
@@ -58,7 +58,7 @@ export default function CocktailEditor({ cocktail, cocktails, ingredients, drink
       ...formData,
       recipe: newRecipe
     });
-  }; 
+  };
 
   const handleSave = async () => {
     if (formData.menu_order === -1) formData.menu_order = cocktails.filter(c => c.type===formData.type&&c.active).reduce((max,c) => (
@@ -165,10 +165,10 @@ export default function CocktailEditor({ cocktail, cocktails, ingredients, drink
               onClick={() => {
                 let volume = 0;
                 for (const r of formData.recipe) {
-                  const ing = ingredients.find(i => i.id===r.ingredient_id)
-                  volume += r.quantity*ing.volume;
+                  const ing = ingredients.find(i => i.id===r.ingredient_id);
+                  if (ing) volume += r.quantity*ing.volume;
                 }
-                window.alert(`Volume sans glaçons : ${Math.round(volume)}cl`);
+                setFormData({...formData,volume:volume});
               }}
             ><GlassWater size={20}/></button>
           </div>
@@ -181,11 +181,13 @@ export default function CocktailEditor({ cocktail, cocktails, ingredients, drink
                 let price = 0;
                 for (const r of formData.recipe) {
                   const ing = ingredients.find(i => i.id===r.ingredient_id);
-                  const ing_price = ing.unit==='cl'?ing.price/100:(ing.unit==='g'?ing.price/1000:ing.price);
-                  price += r.quantity * ing_price;
+                  if (ing) {
+                    const ing_price = ing.unit==='cl'?ing.price/100:(ing.unit==='g'?ing.price/1000:ing.price);
+                    price += r.quantity * ing_price;
+                  }
                 }
                 price = Math.floor(price*100)/100;
-                window.alert(`Coût de production : ${price.toLocaleString(undefined,{minimumFractionDigits:2})} €`);
+                setFormData({...formData,price:price});
               }}
             ><BadgeEuroIcon size={20}/></button>
           </div>
@@ -198,7 +200,12 @@ export default function CocktailEditor({ cocktail, cocktails, ingredients, drink
           {formData.recipe.map((recipe_step, index) => (
             <div key={index} className="cocktail-editor-recipe">
               <div style={{display:'flex',justifyContent:'space-between'}}>
-                <input type='checkbox' className='toggleswitch' checked={recipe_step.showclient} onChange={(e) => handleRecipeChange(index, 'showclient', e.target.checked)} style={{marginLeft:'0'}}/>
+                <div style={{display:'flex',gap:'10px'}}>
+                  <Beaker size={24} style={{marginTop:'5px'}}/>
+                  <input type='checkbox' className='toggleswitch' checked={recipe_step.shaker} onChange={(e) => handleRecipeChange(index, 'shaker', e.target.checked)} style={{marginLeft:'0'}}/>
+                  <Eye size={24} style={{marginTop:'5px',marginLeft:'5px'}}/>
+                  <input type='checkbox' className='toggleswitch' checked={recipe_step.showclient} onChange={(e) => handleRecipeChange(index, 'showclient', e.target.checked)} style={{marginLeft:'0'}}/>
+                </div>
                 <div style={{display:'flex',gap:'10px'}}>
                   {index!==0 && <button className="btn-info" style={{margin:'0',marginBottom:'0'}}
                     onClick={() => moveIngredient(index,'up')}>
@@ -221,10 +228,10 @@ export default function CocktailEditor({ cocktail, cocktails, ingredients, drink
                   ))}
                 </select>
               
-                <input className="cocktail-editor-input" type="number" step="0.1" value={recipe_step.quantity} onChange={(e) => handleRecipeChange(index, 'quantity', parseFloat(e.target.value))}/>
+                <input className="cocktail-editor-input" style={{width:'60px'}} type="number" step="0.1" value={recipe_step.quantity} onChange={(e) => handleRecipeChange(index, 'quantity', parseFloat(e.target.value))}/>
                 {recipe_step.ingredient_id && <>{ingredients.find(i => i.id===recipe_step.ingredient_id).unit}</>}
 
-                <input className="cocktail-editor-input" type="text" value={recipe_step.proportion} onChange={(e) => handleRecipeChange(index, 'proportion', e.target.value)}/>
+                <input className="cocktail-editor-input" style={{width:'50%'}} type="text" value={recipe_step.proportion} onChange={(e) => handleRecipeChange(index, 'proportion', e.target.value)}/>
               </div>
             </div>
           ))}

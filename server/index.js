@@ -35,7 +35,7 @@ app.get('/cocktail', async (req, res) => {
     const cocktails = cocktailsResult.rows;
 
     for (const cocktail of cocktails) {
-      const ingredientsResult = await pool.query(`SELECT i.id as ingredient_id,i.name,i.stock,i.unit,r.step,r.proportion,r.quantity,r.showclient
+      const ingredientsResult = await pool.query(`SELECT i.id as ingredient_id,i.name,i.stock,i.unit,r.step,r.proportion,r.quantity,r.showclient,r.shaker
                                 FROM recipe r JOIN ingredient i ON r.ingredient_id = i.id
                                 WHERE r.cocktail_id = $1`,[cocktail.id]);
       const ingredients = ingredientsResult.rows;
@@ -91,14 +91,14 @@ app.post('/cocktail', async (req, res) => {
 
     // RECIPE
     await pool.query('DELETE FROM recipe WHERE cocktail_id = $1', [cocktailId]);
-    const insertRecipeQuery = `INSERT INTO recipe (cocktail_id, ingredient_id, quantity, step, proportion, showclient)
-                               VALUES ($1, $2, $3, $4, $5, $6)`;
+    const insertRecipeQuery = `INSERT INTO recipe (cocktail_id, ingredient_id, quantity, step, proportion, showclient, shaker)
+                               VALUES ($1, $2, $3, $4, $5, $6, $7)`;
 
     for (let i = 0; i < recipe.length; i++) {
-      const {ingredient_id,quantity,proportion,showclient} = recipe[i];
+      const {ingredient_id,quantity,proportion,showclient,shaker} = recipe[i];
 
       if (ingredient_id && quantity != null) {
-        await pool.query(insertRecipeQuery, [cocktailId,ingredient_id,quantity,i,proportion || '',showclient || false]);
+        await pool.query(insertRecipeQuery, [cocktailId,ingredient_id,quantity,i,proportion || '',showclient || false,shaker || false]);
       }
     }
 

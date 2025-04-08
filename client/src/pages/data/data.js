@@ -9,7 +9,15 @@ export const drinks = [
   { title: 'Produits personnalisés', type: 'CUSTOM', icon: <Ellipsis size={24} />  },
 ];
 
-export const stock_types = ['ALCOOL', 'SOFT', 'SOLID', 'BEER', 'WINE', 'CHAMPAGNE'];
+export const stock_types = [
+  { title: 'Alcools', type: 'ALCOOL'},
+  { title: 'Liqueurs', type: 'LIQUEUR'},
+  { title: 'Softs', type: 'SOFT'},
+  { title: 'Fruits et aromatiques', type: 'SOLID'},
+  { title: 'Bières', type: 'BEER'},
+  { title: 'Vins', type: 'WINE'},
+  { title: 'Champagnes', type: 'CHAMPAGNE'}
+];
 
 export const spiritueux = [
   { name: 'Vodka', spirits: ["Vodka"], active: true },
