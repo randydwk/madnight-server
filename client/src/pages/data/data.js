@@ -18,5 +18,6 @@ export const spiritueux = [
   { name: 'Gin', spirits: ["Gin"], active: true },
   { name: 'Whisky', spirits: ["Whisky"], active: true },
   { name: 'Brandy', spirits: ["Brandy"], active: true },
+  { name: 'Liqueur', spirits: ["Amaretto"], active: true },
   { name: 'Sans alcool', spirits: ["Sans alcool"], active: true },
 ];

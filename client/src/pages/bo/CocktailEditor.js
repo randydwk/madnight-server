@@ -1,7 +1,8 @@
 import { ArrowBigDown, ArrowBigUp, ArrowLeftCircle, BadgeEuroIcon, GlassWater, PlusCircle, Save, Trash2 } from 'lucide-react';
 import { useState } from 'react';
+import { spiritueux } from '../data/data';
 
-export default function CocktailEditor({ cocktail, cocktails, ingredients, drinks, filters, handleCancel }) {
+export default function CocktailEditor({ cocktail, cocktails, ingredients, drinks, handleCancel }) {
   const [formData, setFormData] = useState({ ...cocktail });
 
   const handleChange = (e) => {
@@ -151,9 +152,9 @@ export default function CocktailEditor({ cocktail, cocktails, ingredients, drink
           <p>Spiritueux</p>
           <select className='cocktail-editor-input' name="spirit" value={formData.spirit} onChange={handleChange} disabled={formData.type!=='COCKTAIL'}>
            <option key={''} value={''}>Autre</option>
-            {filters.map((filter) => (
-              <option key={filter.name} value={filter.name}>
-                {filter.name}
+            {spiritueux.map(b => b.spirits).flat().sort((a,b) => a.localeCompare(b)).map((filter) => (
+              <option key={filter} value={filter}>
+                {filter}
               </option>
             ))}
           </select>

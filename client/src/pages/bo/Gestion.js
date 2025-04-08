@@ -554,7 +554,6 @@ const Gestion = () => {
               cocktails={cocktails}
               ingredients={ingredients}
               drinks={drinks}
-              filters={filters}
               handleCancel={() => {
                 setEditedCocktail(null);
                 setCocktails([]);
