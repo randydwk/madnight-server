@@ -454,12 +454,7 @@ const Gestion = () => {
                       key={ingredient.id}
                       onClick={() => openStockModal(ingredient)}
                     >
-                      <BoStock 
-                        name={ingredient.name} 
-                        img={ingredient.img} 
-                        stock={ingredient.stock}
-                        unit={ingredient.unit}
-                      />
+                      <BoStock ingredient={ingredient} />
                     </div>
                   ))}
                 </div>

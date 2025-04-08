@@ -9,7 +9,7 @@ const BoCocktail = ({ cocktail }) => {
           alt={cocktail.name} 
           className='stock-image'
         />
-        {cocktail.type==='COCKTAIL'&&cocktail.spirit&&<p className='cocktail-spirit'>{cocktail.spirit}</p>}
+        {cocktail.type==='COCKTAIL'&&cocktail.spirit&&<p className='stock-spirit'>{cocktail.spirit}</p>}
         {cocktail.maxMake>0?<p className='stock-tag' style={{top:'52px'}}>{cocktail.maxMake}</p>:''}
       </div>
       <h3 className='stock-name'>{cocktail.name}</h3>

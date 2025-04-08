@@ -297,6 +297,20 @@ p.cocktail-name, p.stock-name {
     box-shadow: 0 0 5px var(--shadow);
 }
 
+.stock-price {
+    position: absolute;
+    top: 64px;
+    left: 50%;
+    transform: translateX(-50%);
+    text-wrap: nowrap;
+    font-size: 0.8em;
+    padding: 2px 7px;
+    border-radius: 7px;
+    background-color: var(--text);
+    color: var(--background);
+    box-shadow: 0 0 5px var(--shadow);
+}
+
 .stock-tag {
     right: 5px;
     width: 30px;

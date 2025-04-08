@@ -201,6 +201,20 @@ app.post('/ingredientreload', async (req, res) => {
   }
 });
 
+app.post('/ingredientprice', async (req, res) => {
+  try {
+    const { ingredientId, price } = req.body;
+
+    const result = await pool.query(`UPDATE ingredient SET price = $1 WHERE id = $2 RETURNING *;`,[price,ingredientId]);
+
+    if (result.rows.length === 0) return res.status(404).json({ message: 'Ingredient not found.' });
+    res.json(result.rows[0]);
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).send('Server Error');
+  }
+});
+
 // Users
 app.get('/user', async (req, res) => {
   try {
