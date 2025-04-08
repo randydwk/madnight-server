@@ -568,43 +568,48 @@ const Gestion = () => {
                     <h2 className='text-hr'><span>{page.name}</span></h2>
                     <div className='article-row-container'>
                       {drinks.map((drink) => (
-                        cocktails.filter(a => a.type===drink.type && a.active===page.active).map((cocktail) => (
-                          <div>
-                            <div key={cocktail.id}
-                              onClick={() => {
-                                setEditedCocktail(cocktail);
-                              }}
-                              onContextMenu={(e) => e.preventDefault()}
-                              onTouchStart={(e) => e.preventDefault()}
-                              >
-                              <BoCocktailFo
-                                cocktail={cocktail}
-                                ingredients={ingredients}
-                              />
+                        <>
+                          {drink.type!=='COCKTAIL' && cocktails.filter(a => a.type===drink.type && a.active===page.active).length>0&&
+                            <div className='vertical-hr'></div>
+                          }
+                          {cocktails.filter(a => a.type===drink.type && a.active===page.active).map((cocktail) => (
+                            <div>
+                              <div key={cocktail.id}
+                                onClick={() => {
+                                  setEditedCocktail(cocktail);
+                                }}
+                                onContextMenu={(e) => e.preventDefault()}
+                                onTouchStart={(e) => e.preventDefault()}
+                                >
+                                <BoCocktailFo
+                                  cocktail={cocktail}
+                                  ingredients={ingredients}
+                                />
+                              </div>
+                              <div style={{display:'flex'}}>
+                                <button className='btn-info' style={{margin:'3px 5px 0 auto',height:'28px'}}
+                                  disabled={cocktail.menu_order===0}
+                                  onClick={() => moveCocktail(cocktail,-1)}>
+                                  <ArrowBigLeft size={17}/>
+                                </button>
+                                <input type='checkbox' checked={cocktail.active} className='toggleswitch'
+                                  onClick={() => {cocktailToggle(cocktail)}}
+                                ></input>
+                                <button className='btn-info' style={{margin:'3px auto 0 6px',height:'28px'}}
+                                  onClick={() => moveCocktail(cocktail,1)}>
+                                  <ArrowBigRight size={17}/>
+                                </button>
+                              </div>
                             </div>
-                            <div style={{display:'flex'}}>
-                              <button className='btn-info' style={{margin:'3px 5px 0 auto',height:'28px'}}
-                                disabled={cocktail.menu_order===0}
-                                onClick={() => moveCocktail(cocktail,-1)}>
-                                <ArrowBigLeft size={17}/>
-                              </button>
-                              <input type='checkbox' checked={cocktail.active} className='toggleswitch'
-                                onClick={() => {cocktailToggle(cocktail)}}
-                              ></input>
-                              <button className='btn-info' style={{margin:'3px auto 0 6px',height:'28px'}}
-                                onClick={() => moveCocktail(cocktail,1)}>
-                                <ArrowBigRight size={17}/>
-                              </button>
-                            </div>
-                          </div>
-                        ))
+                          ))}
+                        </>
                       ))}
                     </div>
+                    <button className='btn-success'
+                      onClick={() => {setEditedCocktail({name:'Nouveau produit',type:'COCKTAIL',volume:0,price:0,menu_order:-1,img:'noimage.jpg',recipe:[]})}}
+                    ><PlusCircle size={20}/> Créer un produit</button>
                   </>
                 ))}
-              <button className='btn-success'
-                onClick={() => {setEditedCocktail({name:'Nouveau produit',type:'COCKTAIL',volume:0,price:0,active:true,menu_order:-1,img:'noimage.jpg',recipe:[]})}}
-              ><PlusCircle size={20}/> Créer un produit</button>
               </>
             }
           </>}

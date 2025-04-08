@@ -131,6 +131,14 @@ button {
     content: " • ";
 }
 
+.vertical-hr {
+    border: 1px dashed white;
+    width: 0;
+    max-width: 0;
+    margin: 10px -1px 0 -1px;
+    height: 248px;
+}
+
 /* Buttons */
 
 .btn-success, .btn-danger, .btn-info {
@@ -393,6 +401,7 @@ p.cocktail-name, p.stock-name {
     box-sizing: border-box;
     border: 1px white solid;
     color: var(--background);
+    background-color: var(--text);
 }
 
 .cocktail-editor-recipe {

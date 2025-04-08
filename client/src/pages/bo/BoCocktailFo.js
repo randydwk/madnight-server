@@ -12,7 +12,7 @@ const BoCocktailFo = ({ cocktail, ingredients }) => {
   }
 
   return (
-    <div className='cocktail-container'>
+    <div className='cocktail-container' style={{width:'150px'}}>
       <div className="cocktail-image-wrapper">
         <img 
           src={`images/cocktail/${cocktail.img}`} 

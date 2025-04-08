@@ -13,7 +13,7 @@ const BoCocktail = ({ cocktail }) => {
         {cocktail.maxMake>0?<p className='stock-tag' style={{top:'52px'}}>{cocktail.maxMake}</p>:''}
       </div>
       <h3 className='stock-name'>{cocktail.name}</h3>
-      <p className='stock-name'>{cocktail.volume}cl - {(cocktail.price).toLocaleString(undefined,{minimumFractionDigits:2})} €</p>
+      <p className='stock-name'>{(cocktail.price).toLocaleString(undefined,{minimumFractionDigits:2})} € ({cocktail.volume}cl)</p>
     </div>
   );
 };

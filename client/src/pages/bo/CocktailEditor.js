@@ -13,6 +13,19 @@ export default function CocktailEditor({ cocktail, cocktails, ingredients, drink
     });
   };
 
+  const handleImageUpload = (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+  
+    const previewUrl = URL.createObjectURL(file);
+  
+    setFormData({
+      ...formData,
+      imgFile: file,
+      imgPreview: previewUrl
+    });
+  };
+
   const handleRecipeChange = (index, field, value) => {
     const updatedRecipe = [...formData.recipe];
     updatedRecipe[index] = {
@@ -47,8 +60,10 @@ export default function CocktailEditor({ cocktail, cocktails, ingredients, drink
   }; 
 
   const handleSave = async () => {
-    if (formData.menu_order === -1) formData.menu_order = cocktails.filter(c => c.type===formData.type).reduce((max,c) => (
+    if (formData.menu_order === -1) formData.menu_order = cocktails.filter(c => c.type===formData.type&&c.active).reduce((max,c) => (
       c.menu_order > max ? c.menu_order : max),0)+1;
+    if (formData.imgFile) formData.img = formData.imgFile.name.replace(/\s+/g, '-');
+    if (formData.type==='COCKTAIL' && !formData.id && !formData.spirit) formData.spirit = 'Sans alcool';
     try {
       const res = await fetch('/cocktail', {
         method: 'POST',
@@ -57,6 +72,19 @@ export default function CocktailEditor({ cocktail, cocktails, ingredients, drink
       });
 
       if (!res.ok) throw new Error('Failed to save');
+
+      if (formData.imgFile) {
+        const form = new FormData();
+        form.append('image', formData.imgFile);
+  
+        const imgUpload = await fetch('/cocktailimage', {
+          method: 'POST',
+          body: form,
+        });
+  
+        if (!imgUpload.ok) throw new Error('Erreur lors de l\'upload de l\'image.');
+      }
+
       handleCancel();
     } catch (err) {
       console.error(err);
@@ -95,13 +123,18 @@ export default function CocktailEditor({ cocktail, cocktails, ingredients, drink
       <div className='cocktail-editor-container' style={{width:'100%'}}>
         <div className="cocktail-editor-column" style={{width:'20%'}}>
           <img
-            src={`images/cocktail/${formData.img}`}
-            alt={cocktail.name}
-            className='cocktail-editor-image'
+            src={formData.imgPreview || `images/cocktail/${formData.img}`}
+            alt={formData.name}
+            className="cocktail-editor-image"
           />
 
           <p>Image</p>
-          <input className="cocktail-editor-input" type="text" name="img" value={formData.img} onChange={handleChange}/>
+          <input
+            className="cocktail-editor-input"
+            type="file"
+            accept="image/*"
+            onChange={handleImageUpload}
+          />
 
           <p>Nom</p>
           <input className="cocktail-editor-input" type="text" name="name" value={formData.name} onChange={handleChange}/>

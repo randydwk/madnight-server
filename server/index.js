@@ -10,6 +10,25 @@ const app = express();
 app.use(express.json());
 app.use(express.static(path.resolve(__dirname, '../client/build')));
 
+// Image Upload
+
+const multer = require('multer');
+
+const storage = multer.diskStorage({
+  destination: 'client/public/images/cocktail',
+  filename: (req, file, cb) => {
+    cb(null, file.originalname.replace(/\s+/g, '-'));
+  }
+});
+
+const upload = multer({ storage });
+
+app.post('/cocktailimage', upload.single('image'), (req, res) => {
+  res.status(200).json({ message: 'Image uploaded successfully.' });
+});
+
+// Cocktail
+
 app.get('/cocktail', async (req, res) => {
   try {
     const cocktailsResult = await pool.query('SELECT * FROM cocktail');
