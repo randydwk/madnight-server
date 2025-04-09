@@ -13,6 +13,7 @@ export const stock_types = [
   { title: 'Alcools', type: 'ALCOOL'},
   { title: 'Liqueurs', type: 'LIQUEUR'},
   { title: 'Softs', type: 'SOFT'},
+  { title: 'Jus de fruits', type: 'JUICE'},
   { title: 'Fruits et aromatiques', type: 'SOLID'},
   { title: 'Bières', type: 'BEER'},
   { title: 'Vins', type: 'WINE'},
@@ -26,7 +27,7 @@ export const spiritueux = [
   { title: 'Gin', spirits: ["Gin"], active: true },
   { title: 'Whisky', spirits: ["Whisky"], active: true },
   { title: 'Brandy', spirits: ["Brandy"], active: true },
-  { title: 'Liqueur', spirits: ["Amaretto"], active: true },
+  { title: 'Liqueur', spirits: ["Amaretto","Crème de Menthe","Crème de Pêche","Crème de Whisky","Curaçao","Liqueur de Fraise","Liqueur de Réglisse","Triple Sec"], active: true },
   { title: 'Sans alcool', spirits: ["Sans alcool"], active: true },
   { title: '···', spirits: ["Surprise"], active: true },
 ];
