@@ -63,7 +63,7 @@ const Home = () => {
                         onClick={() => setFilters(filters.map((filter,i) =>
                           i === index ? { ...filter, active: !filter.active } : filter
                         ))}
-                      >{filter.name}</div>
+                      >{filter.title}</div>
                     ))}
                     <div className='filter-cross'
                       onClick={() => setFilters(filters.map((filter) => ({...filter, active: false})))}

@@ -64,7 +64,7 @@ export default function CocktailEditor({ cocktail, cocktails, ingredients, drink
     if (formData.menu_order === -1) formData.menu_order = cocktails.filter(c => c.type===formData.type&&c.active).reduce((max,c) => (
       c.menu_order > max ? c.menu_order : max),0)+1;
     if (formData.imgFile) formData.img = formData.imgFile.name.replace(/\s+/g, '-');
-    if (formData.type==='COCKTAIL' && !formData.id && !formData.spirit) formData.spirit = 'Sans alcool';
+    if (formData.type==='COCKTAIL' && !formData.spirit) formData.spirit = 'Sans alcool';
     try {
       const res = await fetch('/cocktail', {
         method: 'POST',

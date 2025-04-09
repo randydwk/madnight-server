@@ -20,12 +20,13 @@ export const stock_types = [
 ];
 
 export const spiritueux = [
-  { name: 'Vodka', spirits: ["Vodka"], active: true },
-  { name: 'Rhum', spirits: ["Rhum", "Cachaça"], active: true },
-  { name: 'Tequila', spirits: ["Tequila"], active: true },
-  { name: 'Gin', spirits: ["Gin"], active: true },
-  { name: 'Whisky', spirits: ["Whisky"], active: true },
-  { name: 'Brandy', spirits: ["Brandy"], active: true },
-  { name: 'Liqueur', spirits: ["Amaretto"], active: true },
-  { name: 'Sans alcool', spirits: ["Sans alcool"], active: true },
+  { title: 'Vodka', spirits: ["Vodka"], active: true },
+  { title: 'Rhum', spirits: ["Rhum", "Cachaça"], active: true },
+  { title: 'Tequila', spirits: ["Tequila"], active: true },
+  { title: 'Gin', spirits: ["Gin"], active: true },
+  { title: 'Whisky', spirits: ["Whisky"], active: true },
+  { title: 'Brandy', spirits: ["Brandy"], active: true },
+  { title: 'Liqueur', spirits: ["Amaretto"], active: true },
+  { title: 'Sans alcool', spirits: ["Sans alcool"], active: true },
+  { title: '···', spirits: ["Surprise"], active: true },
 ];
