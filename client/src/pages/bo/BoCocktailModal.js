@@ -8,14 +8,14 @@ const BoCocktailModal = ({ isOpen, onRequestClose, cocktail, onMake }) => {
   const [factor, setFactor] = useState(1);
   const [showStock, setShowStock] = useState(false);
 
-  const handleMake = async (make) => {
+  const handleMake = async (number) => {
     try {
       const response = await fetch(`/cocktailmake`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ cocktailId:cocktail.id, cocktailNb: (make?-1:1) }),
+        body: JSON.stringify({ cocktailId:cocktail.id, cocktailNb: number }),
       });
 
       if (response.ok) {
@@ -75,8 +75,8 @@ const BoCocktailModal = ({ isOpen, onRequestClose, cocktail, onMake }) => {
           ))}
         </ul>
 
-        <h3 onClick={() => handleMake(true)} className='modal-button btn-success'>Préparer</h3>
-        <h3 onClick={() => handleMake(false)} className='modal-button btn-danger'>Remettre en Stock</h3>
+        <h3 onClick={() => handleMake(factor*-1)} className='modal-button btn-success'>Préparer {factor}</h3>
+        <h3 onClick={() => handleMake(factor)} className='modal-button btn-danger'>Remettre {factor} en stock</h3>
         <h3 onClick={onRequestClose} className='modal-button btn-info'>Retour</h3>
     </Modal>
   );

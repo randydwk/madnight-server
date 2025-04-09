@@ -65,6 +65,7 @@ export default function CocktailEditor({ cocktail, cocktails, ingredients, drink
       c.menu_order > max ? c.menu_order : max),0)+1;
     if (formData.imgFile) formData.img = formData.imgFile.name.replace(/\s+/g, '-');
     if (formData.type==='COCKTAIL' && !formData.spirit) formData.spirit = 'Sans alcool';
+    formData.volume = Math.round(formData.volume);
     try {
       const res = await fetch('/cocktail', {
         method: 'POST',
@@ -89,7 +90,7 @@ export default function CocktailEditor({ cocktail, cocktails, ingredients, drink
       handleCancel();
     } catch (err) {
       console.error(err);
-      alert('Erreur d\'enregistrement : un produit existe peut-être déjà avec ce nom.');
+      alert('Erreur d\'enregistrement de la recette.');
     }
   };
   
