@@ -1,4 +1,4 @@
-import { Beaker, Inbox, Martini, Minus, Plus } from 'lucide-react';
+import { Beaker, Inbox, Martini, Minus, Plus, TriangleAlert } from 'lucide-react';
 import React, { useState } from 'react';
 import Modal from 'react-modal';
 
@@ -68,7 +68,9 @@ const BoCocktailModal = ({ isOpen, onRequestClose, cocktail, onMake }) => {
                 {!ingredient.showclient?'+ ':''}{ingredient.name}
                 <b style={{color:'var(--success)'}}> {ingredient.quantity>0 && `${ingredient.quantity*factor}${ingredient.unit?ingredient.unit:''}`} </b>
                 {ingredient.proportion && <>({ingredient.proportion})</>}
-                {ingredient.stock<ingredient.quantity||showStock?<span style={{color:'var(--danger)'}}> ({Math.round(ingredient.stock*100)/100+(ingredient.unit?' '+ingredient.unit:'')})</span>:''}
+                {(ingredient.stock<ingredient.quantity||showStock)&&<span style={{color:'var(--danger)'}}> ({Math.round(ingredient.stock*100)/100+(ingredient.unit?' '+ingredient.unit:'')})
+                  {Math.floor(ingredient.stock/ingredient.quantity)===cocktail.maxMake&&<TriangleAlert size={20} style={{verticalAlign:'middle',position:'relative',top:'-1px',left:'5px'}}/>}
+                </span>}
               </li>
           ))}
         </ul>
