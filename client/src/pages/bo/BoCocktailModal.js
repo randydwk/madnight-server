@@ -1,10 +1,13 @@
-import { Beaker, Martini } from 'lucide-react';
-import React from 'react';
+import { Beaker, Inbox, Martini, Minus, Plus } from 'lucide-react';
+import React, { useState } from 'react';
 import Modal from 'react-modal';
 
 Modal.setAppElement('#root');
 
 const BoCocktailModal = ({ isOpen, onRequestClose, cocktail, onMake }) => {
+  const [factor, setFactor] = useState(1);
+  const [showStock, setShowStock] = useState(false);
+
   const handleMake = async (make) => {
     try {
       const response = await fetch(`/cocktailmake`, {
@@ -37,19 +40,35 @@ const BoCocktailModal = ({ isOpen, onRequestClose, cocktail, onMake }) => {
     >
         <h2 className='text-center' style={{marginBlockStart:'0'}}>{cocktail.name}</h2>
 
-        {cocktail.maxMake>0?<p className='text-center'>{cocktail.maxMake} restant{cocktail.maxMake>1?'s':''}</p>:
-        <p className='text-center' style={{color:'var(--danger)'}}>Rupture de stock</p>}
+        <div style={{margin:'0 20px',display:'flex',justifyContent:'space-between'}}>
+          <div style={{display:'flex'}}>
+            <button className="btn-info" style={{margin:'0',marginBottom:'0',height:'28px'}}
+              onClick={() => {if (factor>1) setFactor(factor-1)}}>
+            <Minus size={20} /></button>
+            <div style={{margin:'0',background:'var(--info)',height:'28px',boxSizing:'border-box',fontSize:'0.8em',textAlign:'center',width:'30px',paddingTop:'3px',borderTop:'1px solid white',borderBottom:'1px solid white'}} >x{factor}</div>
+            <button className="btn-info" style={{margin:'0',marginBottom:'0',height:'28px'}}
+              onClick={() => {if (factor<10) setFactor(factor+1)}}>
+            <Plus size={20} /></button>
+          </div>
+
+          <div style={{display:'flex',color:(cocktail.maxMake===0?'var(--danger)':'var(--text)')}}>
+            <div style={{marginTop:'3px'}}>{cocktail.maxMake===0?'Rupture':cocktail.maxMake}</div>
+            <Inbox size={20} style={{margin:'4px 5px 0 4px'}}/>
+            <input type='checkbox' className='toggleswitch' checked={showStock} onChange={(e) => setShowStock(e.target.checked)} style={{margin:0}}/>
+          </div>
+        </div>
 
         {cocktail.instructions && <p className='text-center'>{cocktail.instructions}</p>}
-          
+
         <ul style={{lineHeight:'30px',paddingLeft:'20px',listStyleType:'none'}}>
           {cocktail.recipe && cocktail.recipe.sort((a,b) => a.step-b.step).map((ingredient, index) => (
-              <li key={index} style={{color:(ingredient.stock<ingredient.quantity?'var(--text-soft)':'var(--text)')}}>
-                {ingredient.shaker?<Beaker size={14}/>:<Martini size={14}/>}&nbsp;
+              <li key={index} style={{color:(ingredient.stock<ingredient.quantity?'var(--danger)':'var(--text)')}}>
+                {ingredient.shaker?<Beaker size={16} style={{verticalAlign:'middle',position:'relative',top:'-2px'}}/>:
+                                  <Martini size={16} style={{verticalAlign:'middle',position:'relative',top:'-2px'}}/>}&nbsp;
                 {!ingredient.showclient?'+ ':''}{ingredient.name}
-                <b style={{color:'var(--success)'}}> {ingredient.quantity>0 && `${ingredient.quantity}${ingredient.unit?ingredient.unit:''}`} </b>
+                <b style={{color:'var(--success)'}}> {ingredient.quantity>0 && `${ingredient.quantity*factor}${ingredient.unit?ingredient.unit:''}`} </b>
                 {ingredient.proportion && <>({ingredient.proportion})</>}
-                {ingredient.stock<ingredient.quantity?<span style={{color:'var(--danger)'}}> [reste {Math.round(ingredient.stock*100)/100+(ingredient.unit?' '+ingredient.unit:'')}]</span>:''}
+                {ingredient.stock<ingredient.quantity||showStock?<span style={{color:'var(--danger)'}}> ({Math.round(ingredient.stock*100)/100+(ingredient.unit?' '+ingredient.unit:'')})</span>:''}
               </li>
           ))}
         </ul>
