@@ -276,9 +276,9 @@ app.delete('/deleteuser', async (req, res) => {
 
     const resultPurchases = await pool.query(`DELETE FROM purchase WHERE user_id = $1 RETURNING *;`,[userId]);
 
-    if (resultPurchases.rows.length === 0) {
+    /*if (resultPurchases.rows.length === 0) {
       return res.status(500).json({ message: 'Error with the deleteuser request (purchases).' });
-    }
+    }*/
 
     const result = await pool.query(`DELETE FROM "user" WHERE id = $1 RETURNING *;`,[userId]);
 
