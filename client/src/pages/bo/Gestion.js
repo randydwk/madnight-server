@@ -351,7 +351,7 @@ const Gestion = () => {
                             }}
                             onPointerDown={(e) => {
                               e.preventDefault();
-                              const timer = setTimeout(() => openCocktailModal(cocktail),300);
+                              const timer = setTimeout(() => openCocktailModal(cocktail),500);
                               const cancelPress = () => {
                                 clearTimeout(timer);
                                 document.removeEventListener("pointerup", cancelPress);
