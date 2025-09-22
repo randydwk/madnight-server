@@ -44,7 +44,23 @@ const Home = () => {
 
   return (
     <div>
-      <div className='text-center' style={{paddingTop:'10px',backgroundColor:'black'}}>
+      <div className='text-center' style={{paddingTop:'10px',backgroundColor:'black'}}
+        onPointerDown={(e) => {
+          e.preventDefault();
+          const timer = setTimeout(() => <Redirect to="/gestion"/>,10000);
+          const cancelPress = () => {
+            clearTimeout(timer);
+            document.removeEventListener("pointerup", cancelPress);
+            document.removeEventListener("pointerleave", cancelPress);
+            document.removeEventListener("touchend", cancelPress);
+          };
+          document.addEventListener("pointerup", cancelPress);
+          document.addEventListener("pointerleave", cancelPress);
+          document.addEventListener("touchend", cancelPress);
+        }}
+        onContextMenu={(e) => e.preventDefault()}
+        onTouchStart={(e) => e.preventDefault()}
+      >
         <img src={`images/madnight_logo.png`} alt="Logo" style={{width:'200px'}}/>
       </div>
       <div className='article-column-container'>
