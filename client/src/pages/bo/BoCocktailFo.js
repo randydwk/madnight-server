@@ -27,7 +27,7 @@ const BoCocktailFo = ({ cocktail, ingredients }) => {
         <span></span>
         <span>{cocktail.price.toLocaleString(undefined,{minimumFractionDigits:2})} € </span>
         <span style={{color:'var(--text-soft)'}}> / {productionPrice().toLocaleString(undefined,{minimumFractionDigits:2})} €</span>
-        <span> ({cocktail.volume}cl)</span>
+        <span> ({cocktail.volume} cl)</span>
       </p>
     </div>
   );
