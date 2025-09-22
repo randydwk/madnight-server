@@ -46,7 +46,7 @@ const Home = () => {
 
   return (
     <div>
-      <div className='text-center' style={{paddingTop:'10px',backgroundColor:'black'}}
+      <div className='text-center' style={{paddingTop:'10px',backgroundColor:'white'}}
         onPointerDown={(e) => {
           e.preventDefault();
           const timer = setTimeout(() => {navigate("/gestion")},10000);
@@ -63,7 +63,8 @@ const Home = () => {
         onContextMenu={(e) => e.preventDefault()}
         onTouchStart={(e) => e.preventDefault()}
       >
-        <img src={`images/madnight_logo.png`} alt="Logo" style={{width:'200px'}}/>
+        <img src={`images/lololastar.png`} alt="lololastar birthday" style={{maxWidth:'500px'}}/>
+        {/* <img src={`images/madnight_logo.png`} alt="Logo" style={{width:'200px'}}/> */}
       </div>
       <div className='article-column-container'>
         {cocktails.length === 0 ? (
