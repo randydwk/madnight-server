@@ -113,9 +113,9 @@ const Home = () => {
           </>
         )}
       </div>
-      <p className='text-center' style={{color:'var(--text-soft)!important',textDecoration:'none'}}>
+      {/* <p className='text-center' style={{color:'var(--text-soft)!important',textDecoration:'none'}}>
         ©&nbsp;MAD•NIGHT by Maddy 2025
-      </p>
+      </p> */}
       <div className='toolbar-space'></div>
 
       <div className="bottom-toolbar">
