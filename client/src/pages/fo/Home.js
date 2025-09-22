@@ -63,7 +63,7 @@ const Home = () => {
         onContextMenu={(e) => e.preventDefault()}
         onTouchStart={(e) => e.preventDefault()}
       >
-        <img src={`images/lololastar.png`} alt="lololastar birthday" style={{maxWidth:'500px'}}/>
+        <img src={`images/lololastar.png`} alt="lololastar birthday" style={{maxWidth:'min(500px,100%)'}}/>
         {/* <img src={`images/madnight_logo.png`} alt="Logo" style={{width:'200px'}}/> */}
       </div>
       <div className='article-column-container'>
