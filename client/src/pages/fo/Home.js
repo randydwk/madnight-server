@@ -4,6 +4,7 @@ import Cocktail from './Cocktail';
 import CocktailModal from './CocktailModal';
 import '../styles.css';
 import { X } from 'lucide-react';
+import { useNavigate } from "react-router-dom";
 
 const Home = () => {
 
@@ -14,6 +15,7 @@ const Home = () => {
   const [cocktails, setCocktails] = useState([]);
   const [selectedCocktail, setSelectedCocktail] = useState(null);
   const [modalIsOpen, setModalIsOpen] = useState(false);
+  const navigate = useNavigate();
 
   /* DATABASE */
 
@@ -47,7 +49,7 @@ const Home = () => {
       <div className='text-center' style={{paddingTop:'10px',backgroundColor:'black'}}
         onPointerDown={(e) => {
           e.preventDefault();
-          const timer = setTimeout(() => <Redirect to="/gestion"/>,10000);
+          const timer = setTimeout(() => {navigate("/gestion")},10000);
           const cancelPress = () => {
             clearTimeout(timer);
             document.removeEventListener("pointerup", cancelPress);
