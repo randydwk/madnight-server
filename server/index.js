@@ -16,9 +16,9 @@ const { Readable } = require('stream');
 
 // Config Cloudinary
 cloudinary.config({
-  cloud_name: 'ddelygkuw',
-  api_key: '786675265197865',
-  api_secret: 'qEf_symRam2cKVjdv3ijj6XcRM0'
+  cloud_name: process.env.CLOUDNAME,
+  api_key: process.env.CLOUDKEY,
+  api_secret: process.env.CLOUDSECRET,
 });
 
 // Multer en mémoire (pas besoin de disque)
