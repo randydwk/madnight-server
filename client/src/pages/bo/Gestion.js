@@ -611,7 +611,7 @@ const Gestion = () => {
                       ))}
                     </div>
                     <button className='btn-success'
-                      onClick={() => {setEditedCocktail({name:'Nouveau produit',type:'COCKTAIL',volume:0,price:0,menu_order:-1,img:'noimage.jpg',recipe:[]})}}
+                      onClick={() => {setEditedCocktail({name:'Nouveau produit',type:'COCKTAIL',volume:0,price:0,menu_order:-1,img:'images/cocktail/noimage.jpg',recipe:[]})}}
                     ><PlusCircle size={20}/> Créer un produit</button>
                   </>
                 ))}

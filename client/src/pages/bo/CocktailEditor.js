@@ -61,36 +61,28 @@ export default function CocktailEditor({ cocktail, cocktails, ingredients, drink
   };
 
   const handleSave = async () => {
-    if (formData.menu_order === -1) formData.menu_order = cocktails.filter(c => c.type===formData.type&&c.active).reduce((max,c) => (
-      c.menu_order > max ? c.menu_order : max),0)+1;
-    if (formData.imgFile) formData.img = formData.imgFile.name.replace(/\s+/g, '-');
-    if (formData.type==='COCKTAIL' && !formData.spirit) formData.spirit = 'Sans alcool';
-    formData.volume = Math.round(formData.volume);
     try {
-      const res = await fetch('/cocktail', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(formData)
-      });
+      if (formData.menu_order === -1) formData.menu_order = cocktails.filter(c => c.type===formData.type&&c.active).reduce((max,c) => (
+        c.menu_order > max ? c.menu_order : max),0)+1;
+      if (formData.imgFile) formData.img = formData.imgFile.name.replace(/\s+/g, '-');
+      if (formData.type==='COCKTAIL' && !formData.spirit) formData.spirit = 'Sans alcool';
+      formData.volume = Math.round(formData.volume);
 
-      if (!res.ok) throw new Error('Failed to save');
-
-      if (formData.imgFile) {
-        const form = new FormData();
-        form.append('image', formData.imgFile);
-  
-        const imgUpload = await fetch('/cocktailimage', {
-          method: 'POST',
-          body: form,
-        });
-  
-        if (!imgUpload.ok) throw new Error('Erreur lors de l\'upload de l\'image.');
+      const data = new FormData();
+      for (const key in formData) {
+        if (key === 'imgFile') continue;
+        const value = formData[key];
+        data.append(key, typeof value === 'object' ? JSON.stringify(value) : value);
       }
+      if (formData.imgFile) data.append('image', formData.imgFile);
 
-      handleCancel();
-    } catch (err) {
+      const res = await fetch('/cocktail', { method: 'POST', body: data });
+      if (!res.ok) throw new Error('Erreur lors de l\'enregistrement');
+
+      handleCancel(); // reset form
+    } catch(err) {
       console.error(err);
-      alert('Erreur d\'enregistrement de la recette.');
+      alert('Erreur d\'enregistrement du cocktail');
     }
   };
   
@@ -125,7 +117,7 @@ export default function CocktailEditor({ cocktail, cocktails, ingredients, drink
       <div className='cocktail-editor-container' style={{width:'100%'}}>
         <div className="cocktail-editor-column" style={{width:'20%'}}>
           <img
-            src={formData.imgPreview || `images/cocktail/${formData.img}`}
+            src={formData.imgPreview || `${formData.img}`}
             alt={formData.name}
             className="cocktail-editor-image"
           />

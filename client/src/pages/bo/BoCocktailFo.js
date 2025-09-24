@@ -15,7 +15,7 @@ const BoCocktailFo = ({ cocktail, ingredients }) => {
     <div className='cocktail-container' style={{width:'150px'}}>
       <div className="cocktail-image-wrapper">
         <img 
-          src={`images/cocktail/${cocktail.img}`} 
+          src={`${cocktail.img}`} 
           alt={cocktail.name} 
           className='cocktail-image' 
         />

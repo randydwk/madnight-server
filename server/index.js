@@ -10,21 +10,58 @@ const app = express();
 app.use(express.json());
 app.use(express.static(path.resolve(__dirname, '../client/build')));
 
-// Image Upload
-
 const multer = require('multer');
+const cloudinary = require('cloudinary').v2;
+const { Readable } = require('stream');
 
-const storage = multer.diskStorage({
-  destination: 'client/public/images/cocktail',
-  filename: (req, file, cb) => {
-    cb(null, file.originalname.replace(/\s+/g, '-'));
-  }
+// Config Cloudinary
+cloudinary.config({
+  cloud_name: 'ddelygkuw',
+  api_key: '786675265197865',
+  api_secret: 'qEf_symRam2cKVjdv3ijj6XcRM0'
 });
 
-const upload = multer({ storage });
+// Multer en mémoire (pas besoin de disque)
+const storage = multer.memoryStorage();
+const upload = multer({
+  storage,
+  limits: { fileSize: 5 * 1024 * 1024 } // 5 Mo max
+});
 
-app.post('/cocktailimage', upload.single('image'), (req, res) => {
-  res.status(200).json({ message: 'Image uploaded successfully.' });
+// Fonction utilitaire pour uploader depuis un buffer
+const streamUpload = (buffer) => {
+  return new Promise((resolve, reject) => {
+    const stream = cloudinary.uploader.upload_stream(
+      { folder: 'cocktails' },
+      (error, result) => {
+        if (result) resolve(result);
+        else reject(error);
+      }
+    );
+    const readable = new Readable();
+    readable._read = () => {};
+    readable.push(buffer);
+    readable.push(null);
+    readable.pipe(stream);
+  });
+};
+
+app.post('/cocktailimage', upload.single('image'), async (req, res) => {
+  try {
+    if (!req.file) return res.status(400).json({ message: 'No image provided.' });
+
+    // Upload vers Cloudinary
+    const result = await streamUpload(req.file.buffer);
+
+    // Retourne l'URL Cloudinary
+    res.status(200).json({
+      message: 'Image uploaded successfully.',
+      url: result.secure_url
+    });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: 'Image upload failed.', error: err.message });
+  }
 });
 
 // Cocktail
@@ -59,46 +96,63 @@ app.get('/cocktail', async (req, res) => {
   }
 });
 
-app.post('/cocktail', async (req, res) => {
+app.post('/cocktail', upload.single("image"), async (req, res) => {
   try {
-    const {id,name,type,spirit,volume,price,img,instructions,recipe,menu_order} = req.body;
+    const {id,name,type,spirit,volume,price,instructions,recipe,menu_order} = req.body;
 
-    if (!name || typeof name !== 'string' || !Array.isArray(recipe)) {
+    if (!name || typeof name !== 'string' || !Array.isArray(JSON.parse(recipe || '[]'))) {
       return res.status(400).json({ error: 'Invalid data' });
     }
 
     let cocktailId;
+    let imageUrl = null;
+
+    // Si une image est uploadée, on l'envoie sur Cloudinary
+    if (req.file) {
+      const result = await streamUpload(req.file.buffer);
+      imageUrl = result.secure_url;
+    }
 
     if (id) {
       // UPDATE
-      const updateQuery = `UPDATE cocktail SET name = $1, type = $2, spirit = $3, volume = $4, price = $5, img = $6, instructions = $7, menu_order = $8
-                           WHERE id = $9 RETURNING id`;
-      const updateResult = await pool.query(updateQuery, [name,type,spirit,volume,price,img,instructions || '',menu_order,id]);
+      let updateQuery = `UPDATE cocktail 
+                         SET name = $1, type = $2, spirit = $3, volume = $4, price = $5, instructions = $6, menu_order = $7`;
+      const params = [name, type, spirit, volume, price, instructions || '', menu_order];
 
+      if (imageUrl) {
+        updateQuery += `, img = $8 WHERE id = $9 RETURNING id`;
+        params.push(imageUrl, id);
+      } else {
+        updateQuery += ` WHERE id = $8 RETURNING id`;
+        params.push(id);
+      }
+
+      const updateResult = await pool.query(updateQuery, params);
       if (updateResult.rowCount === 0) {
         return res.status(404).json({ error: 'Cocktail not found' });
       }
-
       cocktailId = updateResult.rows[0].id;
+
     } else {
       // CREATE
-      const insertQuery = `INSERT INTO cocktail (name, type, spirit, volume, price, img, instructions, menu_order)
+      const insertQuery = `INSERT INTO cocktail (name, type, spirit, volume, price, instructions, menu_order, img)
                            VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
                            RETURNING id`;
-      const insertResult = await pool.query(insertQuery, [name,type,spirit,volume,price,img,instructions || '',menu_order]);
+      const insertResult = await pool.query(insertQuery, [name,type,spirit,volume,price,instructions || '',menu_order,imageUrl?imageUrl:'images/cocktail/noimage.jpg']);
       cocktailId = insertResult.rows[0].id;
     }
 
     // RECIPE
-    await pool.query('DELETE FROM recipe WHERE cocktail_id = $1', [cocktailId]);
+    const parsedRecipe = JSON.parse(recipe || '[]');
+    await pool.query('DELETE FROM recipe WHERE cocktail_id=$1', [cocktailId]);
     const insertRecipeQuery = `INSERT INTO recipe (cocktail_id, ingredient_id, quantity, step, proportion, showclient, shaker)
-                               VALUES ($1, $2, $3, $4, $5, $6, $7)`;
+                               VALUES ($1,$2,$3,$4,$5,$6,$7)`;
 
-    for (let i = 0; i < recipe.length; i++) {
-      const {ingredient_id,quantity,proportion,showclient,shaker} = recipe[i];
+    for (let i=0; i<parsedRecipe.length; i++){
+      const { ingredient_id, quantity, proportion, showclient, shaker } = parsedRecipe[i];
 
-      if (ingredient_id && quantity != null) {
-        await pool.query(insertRecipeQuery, [cocktailId,ingredient_id,quantity,i,proportion || '',showclient || false,shaker || false]);
+      if (ingredient_id && quantity!=null){
+        await pool.query(insertRecipeQuery, [cocktailId,ingredient_id,quantity,i,proportion||'',showclient||false,shaker||false]);
       }
     }
 
