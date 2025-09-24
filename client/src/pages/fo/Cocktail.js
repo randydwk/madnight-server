@@ -9,7 +9,7 @@ const Cocktail = ({ cocktail }) => {
           alt={cocktail.name} 
           className='cocktail-image' 
         />
-        {cocktail.spirit&&<p className='cocktail-spirit'>{cocktail.spirit}</p>}
+        {cocktail.spirit&&cocktail.spirit!=='null'&&<p className='cocktail-spirit'>{cocktail.spirit}</p>}
       </div>
       <h3 className='cocktail-name'>{cocktail.name}</h3>
       <p className='cocktail-name'>

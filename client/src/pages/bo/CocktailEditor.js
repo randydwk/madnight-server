@@ -66,6 +66,7 @@ export default function CocktailEditor({ cocktail, cocktails, ingredients, drink
         c.menu_order > max ? c.menu_order : max),0)+1;
       if (formData.imgFile) formData.img = formData.imgFile.name.replace(/\s+/g, '-');
       if (formData.type==='COCKTAIL' && !formData.spirit) formData.spirit = 'Sans alcool';
+      if (formData.type!=='COCKTAIL') formData.spirit = null;
       formData.volume = Math.round(formData.volume);
 
       const data = new FormData();
