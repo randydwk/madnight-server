@@ -46,7 +46,7 @@ const Home = () => {
 
   return (
     <div>
-      <div className='text-center' style={{paddingTop:'10px',backgroundColor:'white'}}
+      <div className='text-center' style={{paddingTop:'10px'}}
         onPointerDown={(e) => {
           e.preventDefault();
           const timer = setTimeout(() => {navigate("/gestion")},10000);
