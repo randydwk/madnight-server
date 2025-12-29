@@ -148,6 +148,8 @@ app.post('/cocktail', upload.single("image"), async (req, res) => {
     const insertRecipeQuery = `INSERT INTO recipe (cocktail_id, ingredient_id, quantity, step, proportion, showclient, shaker)
                                VALUES ($1,$2,$3,$4,$5,$6,$7)`;
 
+    console.log("test server");
+
     for (let i=0; i<parsedRecipe.length; i++){
       const { ingredient_id, quantity, proportion, showclient, shaker } = parsedRecipe[i];
 
