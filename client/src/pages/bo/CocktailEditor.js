@@ -77,6 +77,8 @@ export default function CocktailEditor({ cocktail, cocktails, ingredients, drink
       }
       if (formData.imgFile) data.append('image', formData.imgFile);
 
+      console.log(formData);
+
       const res = await fetch('/cocktail', { method: 'POST', body: data });
       if (!res.ok) throw new Error('Erreur lors de l\'enregistrement');
 
