@@ -114,6 +114,7 @@ app.post('/cocktail', upload.single("image"), async (req, res) => {
     }
 
     if (id) {
+      window.alert("UPDATE COCKTAIL");
       // UPDATE
       let updateQuery = `UPDATE cocktail 
                          SET name = $1, type = $2, spirit = $3, volume = $4, price = $5, instructions = $6, menu_order = $7`;
@@ -134,6 +135,7 @@ app.post('/cocktail', upload.single("image"), async (req, res) => {
       cocktailId = updateResult.rows[0].id;
 
     } else {
+      window.alert("CREATE COCKTAIL");
       // CREATE
       const insertQuery = `INSERT INTO cocktail (name, type, spirit, volume, price, instructions, menu_order, img)
                            VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
@@ -142,6 +144,7 @@ app.post('/cocktail', upload.single("image"), async (req, res) => {
       cocktailId = insertResult.rows[0].id;
     }
 
+    window.alert("RECIPE");
     // RECIPE
     const parsedRecipe = JSON.parse(recipe || '[]');
     await pool.query('DELETE FROM recipe WHERE cocktail_id=$1', [cocktailId]);
