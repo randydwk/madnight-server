@@ -13,6 +13,7 @@ app.use(express.static(path.resolve(__dirname, '../client/build')));
 const multer = require('multer');
 const cloudinary = require('cloudinary').v2;
 const { Readable } = require('stream');
+const { log } = require('console');
 
 // Config Cloudinary
 cloudinary.config({
@@ -148,8 +149,6 @@ app.post('/cocktail', upload.single("image"), async (req, res) => {
     const insertRecipeQuery = `INSERT INTO recipe (cocktail_id, ingredient_id, quantity, step, proportion, showclient, shaker)
                                VALUES ($1,$2,$3,$4,$5,$6,$7)`;
 
-    console.log("test server");
-
     for (let i=0; i<parsedRecipe.length; i++){
       const { ingredient_id, quantity, proportion, showclient, shaker } = parsedRecipe[i];
 
@@ -162,7 +161,7 @@ app.post('/cocktail', upload.single("image"), async (req, res) => {
 
   } catch (err) {
     console.error(err.message);
-    res.status(500).send('Server Error');
+    res.status(500).send(err);
   }
 });
 

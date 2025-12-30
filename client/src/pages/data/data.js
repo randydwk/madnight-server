@@ -27,7 +27,7 @@ export const spiritueux = [
   { title: 'Gin', spirits: ["Gin"], active: true },
   { title: 'Whisky', spirits: ["Whisky"], active: true },
   { title: 'Brandy', spirits: ["Brandy"], active: true },
-  { title: 'Liqueur', spirits: ["Amaretto","Crème de Menthe","Crème de Pêche","Crème de Whisky","Curaçao","Liqueur de Fraise","Liqueur de Réglisse","Triple Sec"], active: true },
+  { title: 'Liqueur', spirits: ["Amaretto","Cointreau","Crème de Pêche","Crème de Whisky","Curaçao","Get 27","Jägermeister","Liqueur de Fraise","Liqueur de Réglisse"], active: true },
   { title: 'Sans alcool', spirits: ["Sans alcool"], active: true },
   // { title: '···', spirits: [""], active: true },
 ];
